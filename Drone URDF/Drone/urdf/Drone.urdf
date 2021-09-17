@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-1-g15f4949  Build Version: 1.6.7594.29634
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="Drone">
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="0.109398871393486 0.131657507535457 0.112663263182331"
+        rpy="0 0 0" />
+      <mass
+        value="0.126804991176584" />
+      <inertia
+        ixx="9.97652233502533E-05"
+        ixy="1.66898922524471E-07"
+        ixz="-1.17703083502394E-05"
+        iyy="0.000143209177105433"
+        iyz="6.35072021476405E-07"
+        izz="5.80634418378302E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Drone/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Drone/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="wing_link4">
+    <inertial>
+      <origin
+        xyz="-1.1624E-06 0.023457 -1.5106E-06"
+        rpy="0 0 0" />
+      <mass
+        value="0.0037436" />
+      <inertia
+        ixx="2.6167E-07"
+        ixy="5.3919E-11"
+        ixz="-4.2389E-07"
+        iyy="1.7889E-06"
+        iyz="2.712E-11"
+        izz="1.6769E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Drone/meshes/wing_link4.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Drone/meshes/wing_link4.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint_4"
+    type="continuous">
+    <origin
+      xyz="0.223657184518553 -0.181780229237707 0.122872305354481"
+      rpy="1.5707963267949 0 -0.899168245815085" />
+    <parent
+      link="base_link" />
+    <child
+      link="wing_link4" />
+    <axis
+      xyz="0 1 0" />
+  </joint>
+  <link
+    name="wing_link3">
+    <inertial>
+      <origin
+        xyz="-1.1624E-06 0.023457 -1.5106E-06"
+        rpy="0 0 0" />
+      <mass
+        value="0.0037436" />
+      <inertia
+        ixx="2.6167E-07"
+        ixy="5.3919E-11"
+        ixz="-4.2389E-07"
+        iyy="1.7889E-06"
+        iyz="2.7119E-11"
+        izz="1.6769E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Drone/meshes/wing_link3.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Drone/meshes/wing_link3.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint_3"
+    type="continuous">
+    <origin
+      xyz="0.177909320129391 -0.00477147433496601 0.122872305354481"
+      rpy="1.5707963267949 0 2.25778719690263" />
+    <parent
+      link="base_link" />
+    <child
+      link="wing_link3" />
+    <axis
+      xyz="0 1 0" />
+  </joint>
+  <link
+    name="wing_link2">
+    <inertial>
+      <origin
+        xyz="-1.1601E-06 0.023457 -1.5102E-06"
+        rpy="0 0 0" />
+      <mass
+        value="0.0037436" />
+      <inertia
+        ixx="2.6167E-07"
+        ixy="5.3923E-11"
+        ixz="-4.2389E-07"
+        iyy="1.7889E-06"
+        iyz="2.7099E-11"
+        izz="1.6769E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Drone/meshes/wing_link2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Drone/meshes/wing_link2.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint_2"
+    type="continuous">
+    <origin
+      xyz="-0.00331946555943933 -0.0524229667081412 0.122872305354481"
+      rpy="1.5707963267949 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="wing_link2" />
+    <axis
+      xyz="0 1 0" />
+  </joint>
+  <link
+    name="wing_link1">
+    <inertial>
+      <origin
+        xyz="-1.1606E-06 0.023457 -1.5103E-06"
+        rpy="0 0 0" />
+      <mass
+        value="0.0037436" />
+      <inertia
+        ixx="2.6167E-07"
+        ixy="5.3921E-11"
+        ixz="-4.2389E-07"
+        iyy="1.7889E-06"
+        iyz="2.7105E-11"
+        izz="1.6769E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Drone/meshes/wing_link1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Drone/meshes/wing_link1.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint_1"
+    type="continuous">
+    <origin
+      xyz="0.0439137711021945 -0.229041164419629 0.122872305354481"
+      rpy="1.5707963267949 0 -0.312112067297162" />
+    <parent
+      link="base_link" />
+    <child
+      link="wing_link1" />
+    <axis
+      xyz="0 1 0" />
+  </joint>
+</robot>
