@@ -1,6 +1,8 @@
 <launch>
   <include
-    file="$(find gazebo_ros)/launch/empty_world.launch" />
+    file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find drone)/worlds/iris_arducopter_demo.world"/>
+    </include>
   <node
     name="tf_footprint_base"
     pkg="tf"
