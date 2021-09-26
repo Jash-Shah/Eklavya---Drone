@@ -8,7 +8,7 @@
     name="base_link">
     <inertial>
       <origin
-        xyz="0.10398871393486 -0.1 0.112663263182331"
+        xyz="0.1105411 -0.117003625 0.112663263182331"
         rpy="0 0 0" />
       <mass
         value="0.126804991176584" />
@@ -44,6 +44,35 @@
       </geometry>
     </collision>
   </link>
+   <gazebo>
+    <plugin name='simple_drone' filename='libplugin_drone.so'>
+        <bodyName>base_link</bodyName>
+        <imuTopic>/drone/imu</imuTopic>
+        <rollpitchProportionalGain>10.0</rollpitchProportionalGain>
+        <rollpitchDifferentialGain>5.0</rollpitchDifferentialGain>
+        <rollpitchLimit>0.5</rollpitchLimit>
+        <yawProportionalGain>2.0</yawProportionalGain>
+        <yawDifferentialGain>1.0</yawDifferentialGain>
+        <yawLimit>1.5</yawLimit>
+        <velocityXYProportionalGain>5.0</velocityXYProportionalGain>
+        <velocityXYDifferentialGain>2.3</velocityXYDifferentialGain>
+        <velocityXYLimit>2</velocityXYLimit>
+        <velocityZProportionalGain>5.0</velocityZProportionalGain>
+        <velocityZDifferentialGain>1.0</velocityZDifferentialGain>
+        <velocityZLimit>-1</velocityZLimit>
+        <positionXYProportionalGain>1.1</positionXYProportionalGain>
+        <positionXYDifferentialGain>0.0</positionXYDifferentialGain>
+        <positionXYIntegralGain>0.0</positionXYIntegralGain>
+        <positionXYLimit>5</positionXYLimit>
+        <positionZProportionalGain>1.0</positionZProportionalGain>
+        <positionZDifferentialGain>0.2</positionZDifferentialGain>
+        <positionZLimit>-1</positionZLimit>
+        <maxForce>50</maxForce>
+        <motionSmallNoise>0.05</motionSmallNoise>
+        <motionDriftNoise>0.03</motionDriftNoise>
+        <motionDriftNoiseTime>5.0</motionDriftNoiseTime>
+    </plugin>
+  </gazebo>
   <link
     name="wing_link1">
     <inertial>
