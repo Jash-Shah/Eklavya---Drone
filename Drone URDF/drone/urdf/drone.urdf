@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-1-g15f4949  Build Version: 1.6.7594.29634
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="drone">
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="0.10398871393486 -0.1 0.112663263182331"
+        rpy="0 0 0" />
+      <mass
+        value="0.126804991176584" />
+      <inertia
+        ixx="9.97652233502536E-05"
+        ixy="1.66898922524467E-07"
+        ixz="-1.17703083502394E-05"
+        iyy="0.000143209177105433"
+        iyz="6.35072021476394E-07"
+        izz="5.80634418378303E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://drone/meshes/base_link.STL" />
+      </geometry>
+      
+      <!-- <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material> -->
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://drone/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <gazebo reference = "base_link">
+      <material>Gazebo/Black</material>
+      </gazebo>
+
+
+  <link
+    name="wing_link1">
+    <inertial>
+      <origin
+        xyz="-1.1605E-06 0.023457 -1.5103E-06"
+        rpy="0 0 0" />
+      <mass
+        value="0.0037436" />
+      <inertia
+        ixx="2.6167E-07"
+        ixy="5.3921E-11"
+        ixz="-4.2389E-07"
+        iyy="1.7889E-06"
+        iyz="2.7104E-11"
+        izz="1.6769E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://drone/meshes/wing_link1.STL" />
+      </geometry>
+      
+      <!-- <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material> -->
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://drone/meshes/wing_link1.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <gazebo reference = "wing_link1">
+      <material>Gazebo/Orange</material>
+      </gazebo>
+      
+  <joint
+    name="joint1"
+    type="revolute">
+    <origin
+      xyz="0.043914 -0.22904 0.12287"
+      rpy="1.5708 0 -0.29318" />
+    <parent
+      link="base_link" />
+    <child
+      link="wing_link1" />
+    <axis
+      xyz="0 1 0" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="wing_link2">
+    <inertial>
+      <origin
+        xyz="-1.1602E-06 0.023457 -1.5102E-06"
+        rpy="0 0 0" />
+      <mass
+        value="0.0037436" />
+      <inertia
+        ixx="2.6167E-07"
+        ixy="5.3922E-11"
+        ixz="-4.2389E-07"
+        iyy="1.7889E-06"
+        iyz="2.71E-11"
+        izz="1.6769E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://drone/meshes/wing_link2.STL" />
+      </geometry>
+      
+      <!-- <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material> -->
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://drone/meshes/wing_link2.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <gazebo reference = "wing_link2">
+      <material>Gazebo/Orange</material>
+      </gazebo>
+      
+  <joint
+    name="joint2"
+    type="revolute">
+    <origin
+      xyz="-0.0033195 -0.052423 0.12287"
+      rpy="1.5708 0 -1.6567" />
+    <parent
+      link="base_link" />
+    <child
+      link="wing_link2" />
+    <axis
+      xyz="0 1 0" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="wing_link3">
+    <inertial>
+      <origin
+        xyz="-1.1601E-06 0.023457 -1.5102E-06"
+        rpy="0 0 0" />
+      <mass
+        value="0.0037436" />
+      <inertia
+        ixx="2.6167E-07"
+        ixy="5.3923E-11"
+        ixz="-4.2389E-07"
+        iyy="1.7889E-06"
+        iyz="2.7097E-11"
+        izz="1.6769E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://drone/meshes/wing_link3.STL" />
+      </geometry>
+      
+      <!-- <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material> -->
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://drone/meshes/wing_link3.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <gazebo reference = "wing_link3">
+      <material>Gazebo/Orange</material>
+      </gazebo>
+      
+  <joint
+    name="joint3"
+    type="revolute">
+    <origin
+      xyz="0.17791 -0.0047715 0.12287"
+      rpy="1.5708 0 -3.0248" />
+    <parent
+      link="base_link" />
+    <child
+      link="wing_link3" />
+    <axis
+      xyz="0 1 0" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="wing_link4">
+    <inertial>
+      <origin
+        xyz="-1.163E-06 0.023457 -1.5107E-06"
+        rpy="0 0 0" />
+      <mass
+        value="0.0037436" />
+      <inertia
+        ixx="2.6167E-07"
+        ixy="5.3919E-11"
+        ixz="-4.2389E-07"
+        iyy="1.7889E-06"
+        iyz="2.7123E-11"
+        izz="1.6769E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://drone/meshes/wing_link4.STL" />
+      </geometry>
+      
+      <!-- <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material> -->
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://drone/meshes/wing_link4.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <gazebo reference = "wing_link4">
+      <material>Gazebo/Orange</material>
+      </gazebo>
+      
+  <joint
+    name="joint4"
+    type="revolute">
+    <origin
+      xyz="0.22366 -0.18178 0.12287"
+      rpy="1.5708 0 0.43793" />
+    <parent
+      link="base_link" />
+    <child
+      link="wing_link4" />
+    <axis
+      xyz="0 1 0" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+</robot>
+
