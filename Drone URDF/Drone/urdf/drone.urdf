@@ -4,11 +4,13 @@
      For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
 <robot
   name="drone">
+
+  <!--Base Link-->
   <link
     name="base_link">
     <inertial>
       <origin
-        xyz="0.1105411 -0.117003625 0.112663263182331"
+        xyz="0.10398871393486 -0.1 0.112663263182331"
         rpy="0 0 0" />
       <mass
         value="0.126804991176584" />
@@ -20,6 +22,7 @@
         iyz="6.35072021476394E-07"
         izz="5.80634418378303E-05" />
     </inertial>
+
     <visual>
       <origin
         xyz="0 0 0"
@@ -28,12 +31,13 @@
         <mesh
           filename="package://drone/meshes/base_link.STL" />
       </geometry>
-      <material
+      <!-- <material
         name="">
         <color
           rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
-      </material>
+      </material> -->
     </visual>
+
     <collision>
       <origin
         xyz="0 0 0"
@@ -44,7 +48,14 @@
       </geometry>
     </collision>
   </link>
-   <gazebo>
+
+  <gazebo reference = "base_link">
+      <material>Gazebo/Black</material>
+      </gazebo>
+
+
+<!--Plugin for simple drone control-->
+<gazebo>
     <plugin name='simple_drone' filename='libplugin_drone.so'>
         <bodyName>base_link</bodyName>
         <imuTopic>/drone/imu</imuTopic>
@@ -73,6 +84,106 @@
         <motionDriftNoiseTime>5.0</motionDriftNoiseTime>
     </plugin>
   </gazebo>
+
+  
+<!--Camera Link-->
+<link name = "camera_link">
+<collision>
+<origin xyz = "0 0 0"
+              rpy = "0 0 0"/>
+<geometry>
+<box size="0.007 0.007 0.007"/>
+</geometry>
+</collision>
+
+<visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+	<box size="0.007 0.007 0.007"/>
+      </geometry>
+      <material name="red"/>
+    </visual>
+
+    <inertial>
+      <mass value="0.00012" />
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
+
+  <gazebo reference="camera_link">
+  <material>Gazebo/Blue</material>
+    <sensor type="camera" name="camera1">
+      <update_rate>30.0</update_rate>
+      <camera name="head">
+        <horizontal_fov>1.3962634</horizontal_fov>
+        <image>
+          <width>800</width>
+          <height>800</height>
+          <format>R8G8B8</format>
+        </image>
+        <clip>
+          <near>0.02</near>
+          <far>300</far>
+        </clip>
+        <noise>
+          <type>gaussian</type>
+          <!-- Noise is sampled independently per pixel on each frame.
+               That pixel's noise value is added to each of its color
+               channels, which at that point lie in the range [0,1]. -->
+          <mean>0.0</mean>
+          <stddev>0.007</stddev>
+        </noise>
+      </camera>
+      <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+        <alwaysOn>true</alwaysOn>
+        <updateRate>0.0</updateRate>
+        <cameraName>drone/camera</cameraName>  <!-- ROS-Topic Name for Camera-->
+        <imageTopicName>img_raw</imageTopicName>  <!-- ROS-Topic Name for where Camera publishes images-->
+        <cameraInfoTopicName>camera_info</cameraInfoTopicName> <!-- ROS-Topic Name where Camera info is published-->
+        <frameName>camera_link_optical</frameName>
+        <!-- setting hackBaseline to anything but 0.0 will cause a misalignment
+            between the gazebo sensor image and the frame it is supposed to
+            be attached to -->
+        <hackBaseline>0.0</hackBaseline>
+        <distortionK1>0.0</distortionK1>
+        <distortionK2>0.0</distortionK2>
+        <distortionK3>0.0</distortionK3>
+        <distortionT1>0.0</distortionT1>
+        <distortionT2>0.0</distortionT2>
+        <CxPrime>0</CxPrime>
+        <Cx>0.0</Cx>
+        <Cy>0.0</Cy>
+        <focalLength>0.0</focalLength>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+
+<!--Camera Joint-->
+<joint name="camera_joint" type="fixed">
+    <axis xyz="0 0 1" />
+    <origin xyz="0.10398871393486 -0.1 0.112663263182331" rpy="0 0 0"/>
+    <parent link="base_link"/>
+    <child link="camera_link"/>
+  </joint>
+
+
+<!--Canmera Optical Joint-->
+<!-- generate an optical frame http://www.ros.org/reps/rep-0103.html#suffix-frames
+      so that ros and opencv can operate on the camera frame correctly -->
+  <joint name="camera_optical_joint" type="fixed">
+    <!-- these values have to be these values otherwise the gazebo camera image
+        won't be aligned properly with the frame it is supposedly originating from -->
+    <origin xyz="0 0 0" rpy="-1.57079632 0 -1.57079632"/>
+    <parent link="camera_link"/>
+    <child link="camera_link_optical"/>
+  </joint>
+
+  <link name="camera_link_optical">
+  </link>
+
+<!--Wing Link 1-->
   <link
     name="wing_link1">
     <inertial>
@@ -97,11 +208,11 @@
         <mesh
           filename="package://drone/meshes/wing_link1.STL" />
       </geometry>
-      <material
+      <!-- <material
         name="">
         <color
           rgba="0.79216 0.81961 0.93333 1" />
-      </material>
+      </material> -->
     </visual>
     <collision>
       <origin
@@ -113,9 +224,16 @@
       </geometry>
     </collision>
   </link>
+
+  <gazebo reference = "wing_link1">
+      <material>Gazebo/Orange</material>
+      </gazebo>
+
+
+<!--Joint 1(Base Link to Wing Link 1)-->
   <joint
     name="joint1"
-    type="revolute">
+    type="continuous">
     <origin
       xyz="0.043914 -0.22904 0.12287"
       rpy="1.5708 0 -0.29318" />
@@ -131,6 +249,9 @@
       effort="0"
       velocity="0" />
   </joint>
+
+
+  <!--Wing Link 2-->
   <link
     name="wing_link2">
     <inertial>
@@ -154,12 +275,12 @@
       <geometry>
         <mesh
           filename="package://drone/meshes/wing_link2.STL" />
-      </geometry>
-      <material
+      </geometry>     
+      <!-- <material
         name="">
         <color
           rgba="0.79216 0.81961 0.93333 1" />
-      </material>
+      </material> -->
     </visual>
     <collision>
       <origin
@@ -171,9 +292,16 @@
       </geometry>
     </collision>
   </link>
+
+  <gazebo reference = "wing_link2">
+      <material>Gazebo/Orange</material>
+      </gazebo>
+
+
+<!--Joint 2(Base Link to Wing Link 2)-->
   <joint
     name="joint2"
-    type="revolute">
+    type="continuous">
     <origin
       xyz="-0.0033195 -0.052423 0.12287"
       rpy="1.5708 0 -1.6567" />
@@ -189,6 +317,9 @@
       effort="0"
       velocity="0" />
   </joint>
+
+
+  <!--Wing Link 3-->
   <link
     name="wing_link3">
     <inertial>
@@ -212,12 +343,12 @@
       <geometry>
         <mesh
           filename="package://drone/meshes/wing_link3.STL" />
-      </geometry>
-      <material
+      </geometry>    
+      <!-- <material
         name="">
         <color
           rgba="0.79216 0.81961 0.93333 1" />
-      </material>
+      </material> -->
     </visual>
     <collision>
       <origin
@@ -229,9 +360,16 @@
       </geometry>
     </collision>
   </link>
+
+  <gazebo reference = "wing_link3">
+      <material>Gazebo/Orange</material>
+      </gazebo>
+
+
+<!--Joint 3(Base Link to Wing Link 3)-->
   <joint
     name="joint3"
-    type="revolute">
+    type="continuous">
     <origin
       xyz="0.17791 -0.0047715 0.12287"
       rpy="1.5708 0 -3.0248" />
@@ -247,6 +385,9 @@
       effort="0"
       velocity="0" />
   </joint>
+
+
+ <!--Wing Link 4--> 
   <link
     name="wing_link4">
     <inertial>
@@ -270,12 +411,12 @@
       <geometry>
         <mesh
           filename="package://drone/meshes/wing_link4.STL" />
-      </geometry>
-      <material
+      </geometry>      
+      <!-- <material
         name="">
         <color
           rgba="0.79216 0.81961 0.93333 1" />
-      </material>
+      </material> -->
     </visual>
     <collision>
       <origin
@@ -287,9 +428,16 @@
       </geometry>
     </collision>
   </link>
+
+  <gazebo reference = "wing_link4">
+      <material>Gazebo/Orange</material>
+      </gazebo>
+
+
+<!--Joint 4(Base Link to Wing Link 4)-->
   <joint
     name="joint4"
-    type="revolute">
+    type="continuous">
     <origin
       xyz="0.22366 -0.18178 0.12287"
       rpy="1.5708 0 0.43793" />
@@ -306,3 +454,5 @@
       velocity="0" />
   </joint>
 </robot>
+   
+  
