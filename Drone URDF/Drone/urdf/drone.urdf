@@ -55,6 +55,7 @@
 
 
 <!--Plugin for simple drone control-->
+<!--
 <gazebo>
     <plugin name='simple_drone' filename='libplugin_drone.so'>
         <bodyName>base_link</bodyName>
@@ -84,7 +85,7 @@
         <motionDriftNoiseTime>5.0</motionDriftNoiseTime>
     </plugin>
   </gazebo>
-
+-->
   
 <!--Camera Link-->
 <link name = "camera_link">
