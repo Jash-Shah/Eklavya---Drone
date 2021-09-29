@@ -9,7 +9,10 @@ find_package(catkin REQUIRED COMPONENTS
     sensor_msgs
     image_transport
     gazebo_ros
-    message_generation)
+    message_generation
+    controller_manager 
+    joint_state_controller 
+    robot_state_publisher)
 
 catkin_package(
    INCLUDE_DIRS include
