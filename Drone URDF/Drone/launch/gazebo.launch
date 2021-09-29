@@ -1,7 +1,7 @@
 <launch>
   <include
     file="$(find gazebo_ros)/launch/empty_world.launch">
-    <arg name="world_name" value="$(find drone)/worlds/iris_arducopter_demo.world"/>
+    <arg name="world_name" value="$(find drone)/worlds/empty_sky.world"/>
     </include>
   <node
     name="tf_footprint_base"
@@ -14,9 +14,20 @@
     type="spawn_model"
     args="-file $(find drone)/urdf/drone.urdf -urdf -model drone"
     output="screen" />
-  <node
+   <node
     name="fake_joint_calibration"
     pkg="rostopic"
     type="rostopic"
-    args="pub /calibrated std_msgs/Bool true" />
+    args="pub /calibrated std_msgs/Bool true" /> 
+    
+      <!-- Load joint controller configurations from YAML file to parameter server -->
+  <rosparam file="$(find drone)/config/drone_control.yaml" command="load"/>
+
+  <!-- Start controllers -->
+  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+    output="screen" ns="/drone" args="
+    joint_state_controller
+    joint1_velocity_controller
+    joint2_velocity_controller" /> 
+    
 </launch>
