@@ -1,0 +1,9 @@
+# Gripper Configuration
+config_gripper:
+  gripper_model_name: "drone"
+  gripper_link_name: "base_link"
+  
+  attachable_object_model_name: "cardoard_box"
+  attachable_object_link_name: "link"
+
+  logical_camera_topic_name: "/drone/logical_camera"
