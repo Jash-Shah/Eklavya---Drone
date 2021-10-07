@@ -1,0 +1,148 @@
+<?xml version="1.0"?>
+<sdf version="1.6">
+  <world name="default">
+    <scene>
+      <shadows>false</shadows>
+      <grid>false</grid>
+      <origin_visual>false</origin_visual>
+      <sky>
+        <clouds>
+          <speed>4</speed>
+        </clouds>
+      </sky>
+    </scene>
+    <include>
+      <uri>model://sun</uri>
+    </include>
+<!--     <light type="directional" name="sun">
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 500 0 0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <attenuation>
+        <range>3000</range>
+        <constant>0.9</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <direction>-0.5 0.1 -0.9</direction>
+    </light> -->
+    <include>
+      <uri>model://city</uri>
+      <static>true</static>
+      <pose>0 0 0 0 0 3.14</pose>
+    </include>
+    <include>
+      <uri>model://returns</uri>
+      <name>returns</name>
+      <pose>-5.5 -16.5 16.454361 0 0 0</pose>
+    </include>    
+    <include>
+      <uri>model://delivery</uri>
+      <name>delivery</name>
+      <pose>-19.5 -16.5 16.454361 0 0 0</pose>
+    </include>     
+    <include>
+      <uri>model://parcel_box</uri>
+      <name>parcel_box_1</name>
+      <pose>-21 -15.0 16.454361 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://parcel_box</uri>
+      <name>parcel_box_2</name>
+      <pose>-19.5 -15 16.454361 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://parcel_box</uri>
+      <name>parcel_box_3</name>
+       <pose>-18.0 -15.0 16.454361 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://parcel_box</uri>
+      <name>parcel_box_4</name>
+      <pose>-21 -16.5 16.454361 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://parcel_box</uri>
+      <name>parcel_box_5</name>
+      <pose>-19.5 -16.5 16.454361 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://parcel_box</uri>
+      <name>parcel_box_6</name>
+      <pose>-18.0 -16.5 16.454361 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://parcel_box</uri>
+      <name>parcel_box_7</name>
+        <pose>-21 -18 16.454361 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://parcel_box</uri>
+      <name>parcel_box_8</name>
+      <pose>-19.5 -18 16.454361 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://parcel_box</uri>
+      <name>parcel_box_9</name>
+      <pose>-18.0 -18 16.454361 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://parcel_box</uri>
+      <name>parcel_box_10</name>
+      <pose>-15.852547 29.622349 13.544723 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://parcel_box</uri>
+      <name>parcel_box_11</name>
+      <pose>-150.885223 134.140472 13.542231 0 0 0</pose>
+    </include>    
+    <include>
+      <uri>model://parcel_box</uri>
+      <name>parcel_box_12</name>
+      <pose>39.994392 24.260313 10.810452 0 0 0</pose>
+    </include>      
+    <include>
+      <uri>model://parcel_box</uri>
+      <name>parcel_box_13</name>
+      <pose>47.342739 -21.851786 13.031669 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://parcel_box</uri>
+      <name>parcel_box_14</name>
+      <pose>-11.718401 -75.356155 17.156542 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://parcel_box</uri>
+      <name>parcel_box_15</name>
+      <pose>-7.664819 -100.773880 12.714937 0 0 0</pose>
+    </include>    
+    <include>
+      <uri>model://parcel_box</uri>
+      <name>parcel_box_16</name>
+      <pose>-6.866561 -124.471870 12.611916 0 0 0</pose>
+    </include>    
+    <include>
+      <uri>model://parcel_box</uri>
+      <name>parcel_box_17</name>
+      <pose>99.790077 -67.659922 16.295273 0 0 0</pose>
+    </include>   
+    <include>
+      <uri>model://parcel_box</uri>
+      <name>parcel_box_18</name>
+      <pose>114.531471 -97.052532 21.805258 0 0 0</pose>
+    </include>               
+    <include>
+      <uri>model://edrone</uri>
+      <static>1</static>
+      <pose>-12.31 -23 16.447981 0 0 0</pose>
+    </include>
+    <gui>
+      <camera name="user_camera">
+        <pose>-12.31 -50.551014 37.282482 0 0.540000 1.567200</pose>
+      </camera>
+    </gui> 
+    <plugin name="ros_link_attacher_plugin" filename="libgazebo_ros_link_attacher.so"/>
+  </world>
+</sdf>
+
