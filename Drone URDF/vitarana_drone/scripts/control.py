@@ -1,5 +1,4 @@
 #! /usr/bin/env python3
-
 import rospy
 import time
 from vitarana_drone.msg import prop_speed
@@ -74,7 +73,8 @@ def PID_alt(msg):
 
     output_alt = kp*p_term + ki*i_term + kd*d_term
 
-    thrust = hover_speed + output_alt*1.5
+    print("Altitude Correction = ",output_alt)
+    thrust = hover_speed + output_alt*10
     print("Thrust = ",thrust)
 
     speed = prop_speed()
@@ -83,16 +83,17 @@ def PID_alt(msg):
     speed.prop3 = thrust
     speed.prop4 = thrust
     rospy.loginfo(speed) #!!!
+    message_pub.publish(speed)
 
-
-    while not rospy.is_shutdown():
-        message_pub.publish(speed)
+    # while not rospy.is_shutdown():
+    #     message_pub.publish(speed)
 
 
 def control():
     global altitude, thrust, speed
     rospy.init_node("altitude", anonymous = False)
     rospy.Subscriber("/edrone/gps", NavSatFix, PID_alt)
+    rospy.spin()
     # rospy.init_node("motor_speed_pub",anonymous=False)
     # speed = prop_speed()
     # speed.prop1 = thrust
