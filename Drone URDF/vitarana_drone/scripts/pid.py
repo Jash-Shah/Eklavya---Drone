@@ -73,10 +73,11 @@ def PID_alt(roll, pitch, yaw, req_alt, altitude):
         dMem_roll = 0
         dMem_pitch = 0
         dMem_yaw = 0
-        flag += 1
+        
         prev_alt_err = 0
         i_term = 0
         d_term = 0
+        
         
     #Define the difference in error or dErr
     dTime = current_time - prevTime 
@@ -87,21 +88,25 @@ def PID_alt(roll, pitch, yaw, req_alt, altitude):
 
     #--------------------------------
     if (dTime >= sample_time):
-        #proportional(e(t))
-        p_term = current_alt_err #this is for thrust
-        pMem_roll = kp_roll * err_roll
-        pMem_pitch = kp_pitch * err_pitch
-        pMem_yaw = kp_yaw * err_yaw
-        #integral(e(t))
-        i_term += current_alt_err * dTime #this is for thrust
-        iMem_roll += err_pitch * dTime
-        iMem_pitch += err_roll * dTime
-        iMem_yaw += err_yaw * dTime
-        #derivative(e(t))
-        dMem_roll = dErr_roll / dTime
-        dMem_pitch = dErr_pitch / dTime
-        dMem_yaw = dErr_yaw / dTime
-        d_term =  dErr_alt/dTime
+        if flag == 0:
+            p_term = current_alt_err #this is for thrust
+            flag += 1
+        else:
+            #proportional(e(t))
+            p_term = current_alt_err #this is for thrust
+            pMem_roll = kp_roll * err_roll
+            pMem_pitch = kp_pitch * err_pitch
+            pMem_yaw = kp_yaw * err_yaw
+            #integral(e(t))
+            i_term += current_alt_err * dTime #this is for thrust
+            iMem_roll += err_pitch * dTime
+            iMem_pitch += err_roll * dTime
+            iMem_yaw += err_yaw * dTime
+            #derivative(e(t))
+            dMem_roll = dErr_roll / dTime
+            dMem_pitch = dErr_pitch / dTime
+            dMem_yaw = dErr_yaw / dTime
+            d_term =  dErr_alt/dTime
 
     prevTime = current_time
     prevErr_roll = err_roll
@@ -115,7 +120,7 @@ def PID_alt(roll, pitch, yaw, req_alt, altitude):
     output_yaw = pMem_yaw + ki_yaw * iMem_yaw + kd_yaw * dMem_yaw 
 
     print("Altitude Correction = ",output_alt)
-    thrust = hover_speed + output_alt/hover_speed
+    thrust = hover_speed + output_alt*5
 
     #we need to limit this thrust
     if(thrust > 1000): 
@@ -132,14 +137,14 @@ def PID_alt(roll, pitch, yaw, req_alt, altitude):
     # speed.prop4 = thrust
 
     #values coming out are strange
-    #Need to fine  une a lot
-    speed.prop1 = (thrust - output_yaw + output_pitch - output_roll) / 2
+    #Need to fine tune a lot
+    speed.prop1 = (thrust - output_yaw + output_pitch - output_roll) 
  
-    speed.prop2 = (thrust + output_yaw + output_pitch + output_roll) / 2
+    speed.prop2 = (thrust + output_yaw + output_pitch + output_roll) 
   
-    speed.prop3 = (thrust - output_yaw - output_pitch + output_roll) / 2
+    speed.prop3 = (thrust - output_yaw - output_pitch + output_roll) 
  
-    speed.prop4 = (thrust + output_yaw - output_pitch - output_roll) / 2
+    speed.prop4 = (thrust + output_yaw - output_pitch - output_roll) 
 
     #limit the speed
     if(speed.prop1 > 1000): speed.prop1 = 1000

@@ -155,6 +155,11 @@ def alt_control(gps, vel, imu):
     global prev_time,prev_alt_err,i_term,d_term,p_term
     global roll, pitch, yaw
 
+    calVelocity(vel)
+    calImu(imu)
+    calAltitude(gps)
+    rospy.Subscriber("alt_pid", Float64MultiArray, setPID) #!!
+
     print("\nAltitude = " + str(altitude))
     current_alt_err = req_alt - altitude
     print("Required alt = ",req_alt)
@@ -165,8 +170,7 @@ def alt_control(gps, vel, imu):
     #rospy.Subscriber("alt_pid", Float64MultiArray, setPID) #!!
     
     #get information of the velocity and r p y of the drone
-    calVelocity(vel)
-    calImu(imu)
+    
 
     #the goal is to get a function that stabilises the r p y of the drone while maintaining altitude
     speed = PID_alt(roll, pitch, yaw, req_alt, altitude)
