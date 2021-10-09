@@ -75,6 +75,7 @@ def PID_alts(gps, vel, imu):
     global rate
     global prev_time,prev_alt_err,i_term,d_term,p_term
     global roll, pitch, yaw
+    global flag
     altitude  = gps.altitude
     print("\nAltitude = " + str(altitude))
     current_alt_err = req_alt - altitude
@@ -171,9 +172,8 @@ def alt_control(gps, vel, imu):
     
     #get information of the velocity and r p y of the drone
     
-
     #the goal is to get a function that stabilises the r p y of the drone while maintaining altitude
-    speed = PID_alt(roll, pitch, yaw, req_alt, altitude)
+    speed = PID_alt(roll, pitch, yaw, req_alt, altitude,flag)
     message_pub.publish(speed)
 
 

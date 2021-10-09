@@ -11,11 +11,11 @@ from geometry_msgs.msg import Vector3
 from tf.transformations import euler_from_quaternion, quaternion_from_euler
 from std_msgs.msg import Float64, Float64MultiArray
 
-def PID_alt(roll, pitch, yaw, req_alt, altitude):
+def PID_alt(roll, pitch, yaw, req_alt, altitude,flag):
     #global variables are declared to avoid their values resetting to 0
     #global altitude #!!
     global prev_alt_err,i_term,d_term,p_term
-    global kp_roll, ki_roll, kd_roll, kp_pitch, ki_pitch, kd_pitch, kp_yaw, ki_yaw, kd_yaw, prevErr_roll, prevErr_pitch, prevErr_yaw, pMem_roll, pMem_yaw, pMem_pitch, iMem_roll, iMem_pitch, iMem_yaw, dMem_roll, dMem_pitch, dMem_yaw, flag, setpoint, sampleTime
+    global prevTime,kp_roll, ki_roll, kd_roll, kp_pitch, ki_pitch, kd_pitch, kp_yaw, ki_yaw, kd_yaw, prevErr_roll, prevErr_pitch, prevErr_yaw, pMem_roll, pMem_yaw, pMem_pitch, iMem_roll, iMem_pitch, iMem_yaw, dMem_roll, dMem_pitch, dMem_yaw, setpoint, sample_time
     global kp_thrust, ki_thrust, kd_thrust
     #-----------------------
     #Assigning PID values here. From symmetry, control for roll and pitch is the same.
@@ -31,7 +31,6 @@ def PID_alt(roll, pitch, yaw, req_alt, altitude):
     kp_yaw = 0.1
     ki_yaw = 0
     kd_yaw = 0
-    flag = 0
     #print("\nAltitude = " + str(altitude))
     #print("Required alt = ",req_alt)
     # rospy.init_node("pid_alt_node",anonymous=False)
@@ -72,14 +71,13 @@ def PID_alt(roll, pitch, yaw, req_alt, altitude):
         iMem_yaw = 0
         dMem_roll = 0
         dMem_pitch = 0
-        dMem_yaw = 0
-        
+        dMem_yaw = 0    
         prev_alt_err = 0
         i_term = 0
         d_term = 0
-        
-        
+
     #Define the difference in error or dErr
+    print("Prev Time = ",prevTime)
     dTime = current_time - prevTime 
     dErr_alt = current_alt_err - prev_alt_err #difference in error
     dErr_pitch = err_pitch - prevErr_pitch
@@ -88,12 +86,12 @@ def PID_alt(roll, pitch, yaw, req_alt, altitude):
 
     #--------------------------------
     if (dTime >= sample_time):
+        p_term = current_alt_err#this is for thrust
         if flag == 0:
-            p_term = current_alt_err #this is for thrust
+
             flag += 1
         else:
             #proportional(e(t))
-            p_term = current_alt_err #this is for thrust
             pMem_roll = kp_roll * err_roll
             pMem_pitch = kp_pitch * err_pitch
             pMem_yaw = kp_yaw * err_yaw
@@ -109,6 +107,7 @@ def PID_alt(roll, pitch, yaw, req_alt, altitude):
             d_term =  dErr_alt/dTime
 
     prevTime = current_time
+    # print("Prev Time = ",prevTime)
     prevErr_roll = err_roll
     prevErr_pitch = err_pitch
     prevErr_yaw = err_yaw
@@ -120,7 +119,13 @@ def PID_alt(roll, pitch, yaw, req_alt, altitude):
     output_yaw = pMem_yaw + ki_yaw * iMem_yaw + kd_yaw * dMem_yaw 
 
     print("Altitude Correction = ",output_alt)
-    thrust = hover_speed + output_alt*5
+    print("Flag = ",flag)
+    print("D Time = ",dTime)
+    print("P Term = ",p_term)
+    print("I Term = ",i_term)
+    print("D Term = ",d_term)
+    thrust = hover_speed + output_alt*1.2
+
 
     #we need to limit this thrust
     if(thrust > 1000): 
@@ -138,6 +143,13 @@ def PID_alt(roll, pitch, yaw, req_alt, altitude):
 
     #values coming out are strange
     #Need to fine tune a lot
+
+    #uncomment for only altitutde PID testing
+    output_roll=0
+    output_pitch=0
+    output_yaw=0
+
+
     speed.prop1 = (thrust - output_yaw + output_pitch - output_roll) 
  
     speed.prop2 = (thrust + output_yaw + output_pitch + output_roll) 
