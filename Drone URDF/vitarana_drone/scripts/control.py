@@ -14,9 +14,9 @@ from tf.transformations import euler_from_quaternion, quaternion_from_euler
 from std_msgs.msg import Float64, Float64MultiArray
 
 altitude = 0.30999
-kp = 2
-ki = 0.002
-kd = 200 
+kp = 25
+ki = 0.05
+kd = 20
 flag = 0
 vel_x = 0 
 vel_y = 0 
@@ -150,17 +150,16 @@ def alt_control(gps, vel, imu):
     global altitude #!!
     global req_alt
     global flag
-    global thrust
-    global speed
-    global rate
-    global prev_time,prev_alt_err,i_term,d_term,p_term
+    global kp,ki,kd
+    # global thrust
+    # global speed
     global roll, pitch, yaw
 
     calVelocity(vel)
     calImu(imu)
     calAltitude(gps)
     rospy.Subscriber("alt_pid", Float64MultiArray, setPID) #!!
-
+    k_alt = (kp,ki,kd)
     print("\nAltitude = " + str(altitude))
     current_alt_err = req_alt - altitude
     print("Required alt = ",req_alt)
@@ -173,7 +172,8 @@ def alt_control(gps, vel, imu):
     #get information of the velocity and r p y of the drone
     
     #the goal is to get a function that stabilises the r p y of the drone while maintaining altitude
-    speed = PID_alt(roll, pitch, yaw, req_alt, altitude,flag)
+    speed = PID_alt(roll, pitch, yaw, req_alt, altitude, k_alt, flag)
+    flag += 1
     message_pub.publish(speed)
 
 

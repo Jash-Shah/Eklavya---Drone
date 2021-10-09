@@ -11,7 +11,8 @@ from geometry_msgs.msg import Vector3
 from tf.transformations import euler_from_quaternion, quaternion_from_euler
 from std_msgs.msg import Float64, Float64MultiArray
 
-def PID_alt(roll, pitch, yaw, req_alt, altitude,flag):
+
+def PID_alt(roll, pitch, yaw, req_alt, altitude, k_alt, flag):
     #global variables are declared to avoid their values resetting to 0
     #global altitude #!!
     global prev_alt_err,i_term,d_term,p_term
@@ -19,9 +20,9 @@ def PID_alt(roll, pitch, yaw, req_alt, altitude,flag):
     global kp_thrust, ki_thrust, kd_thrust
     #-----------------------
     #Assigning PID values here. From symmetry, control for roll and pitch is the same.
-    kp_thrust = 2
-    ki_thrust = 0.002
-    kd_thrust = 200 
+    kp_thrust = k_alt[0]
+    ki_thrust = k_alt[1]
+    kd_thrust = k_alt[2]
     kp_roll = 70
     ki_roll = 0.0002
     kd_roll = 89
@@ -77,37 +78,48 @@ def PID_alt(roll, pitch, yaw, req_alt, altitude,flag):
         d_term = 0
 
     #Define the difference in error or dErr
-    print("Prev Time = ",prevTime)
+    
+    
+
     dTime = current_time - prevTime 
     dErr_alt = current_alt_err - prev_alt_err #difference in error
     dErr_pitch = err_pitch - prevErr_pitch
     dErr_roll = err_roll - prevErr_roll
     dErr_yaw = err_yaw - prevErr_yaw
-
+    
     #--------------------------------
     if (dTime >= sample_time):
         p_term = current_alt_err#this is for thrust
-        if flag == 0:
-
-            flag += 1
-        else:
-            #proportional(e(t))
-            pMem_roll = kp_roll * err_roll
-            pMem_pitch = kp_pitch * err_pitch
-            pMem_yaw = kp_yaw * err_yaw
-            #integral(e(t))
-            i_term += current_alt_err * dTime #this is for thrust
-            iMem_roll += err_pitch * dTime
-            iMem_pitch += err_roll * dTime
-            iMem_yaw += err_yaw * dTime
-            #derivative(e(t))
-            dMem_roll = dErr_roll / dTime
-            dMem_pitch = dErr_pitch / dTime
-            dMem_yaw = dErr_yaw / dTime
-            d_term =  dErr_alt/dTime
+        # if flag == 0:
+        #     flag += 1
+        # else:
+        #proportional(e(t))
+        pMem_roll = kp_roll * err_roll
+        pMem_pitch = kp_pitch * err_pitch
+        pMem_yaw = kp_yaw * err_yaw
+        #integral(e(t))
+        i_term += current_alt_err * dTime #this is for thrust
+        iMem_roll += err_pitch * dTime
+        iMem_pitch += err_roll * dTime
+        iMem_yaw += err_yaw * dTime
+        #limit integrand values
+        if(i_term > 800): i_term = 800
+        if(i_term < -800): i_term = -800
+        if(iMem_roll > 400): iMem_roll = 400
+        if(iMem_roll < -400): iMem_roll = -400
+        if(iMem_pitch > 400): iMem_pitch = 400
+        if(iMem_pitch < -400): iMem_pitch = -400
+        if(iMem_yaw > 400): iMem_yaw = 400
+        if(iMem_yaw < -400): iMem_yaw = 400
+        #derivative(e(t))
+        dMem_roll = dErr_roll / dTime
+        dMem_pitch = dErr_pitch / dTime
+        dMem_yaw = dErr_yaw / dTime
+        #d_term =  dErr_alt / dTime #if dTime is very small, this term will be very large
+        d_term = dErr_alt / dTime
 
     prevTime = current_time
-    # print("Prev Time = ",prevTime)
+    print("Prev Time = ",prevTime)
     prevErr_roll = err_roll
     prevErr_pitch = err_pitch
     prevErr_yaw = err_yaw
@@ -124,7 +136,8 @@ def PID_alt(roll, pitch, yaw, req_alt, altitude,flag):
     print("P Term = ",p_term)
     print("I Term = ",i_term)
     print("D Term = ",d_term)
-    thrust = hover_speed + output_alt*1.2
+
+    thrust = hover_speed + output_alt*2.5
 
 
     #we need to limit this thrust
