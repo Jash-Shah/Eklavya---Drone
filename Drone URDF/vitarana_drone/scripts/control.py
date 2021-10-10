@@ -17,6 +17,15 @@ altitude = 0.30999
 kp = 25
 ki = 0.05
 kd = 20
+kp_roll = 0.2
+ki_roll = 0.001
+kd_roll = 0.5
+kp_pitch = 0.15
+ki_pitch = 0.001
+kd_pitch = 0.4
+kp_yaw = 0.1
+ki_yaw = 0.001
+kd_yaw = 0.2
 flag = 0
 vel_x = 0 
 vel_y = 0 
@@ -28,11 +37,29 @@ message_pub = rospy.Publisher("/edrone/pwm", prop_speed, queue_size=1000)
 req_alt = float(input("Enter height drone should hover at : "))
 thrust = 0
 
-def setPID(msg):
+def setPID_alt(msg):
     global kp,ki,kd
     kp = msg.data[0]
     ki =  msg.data[1]
     kd = msg.data[2]
+
+def setPID_roll(msg):
+    global kp_roll,ki_roll,kd_roll
+    kp_roll = msg.data[0]
+    ki_roll =  msg.data[1]
+    kd_roll = msg.data[2]
+
+def setPID_pitch(msg):
+    global kp_pitch,ki_pitch,kd_pitch
+    kp_pitch = msg.data[0]
+    ki_pitch =  msg.data[1]
+    kd_pitch = msg.data[2]
+
+def setPID_yaw(msg):
+    global kp_yaw,ki_yaw,kd_yaw
+    kp_yaw = msg.data[0]
+    ki_yaw =  msg.data[1]
+    kd_yaw = msg.data[2]
 
 def calAltitude(msg):
     global altitude
@@ -158,8 +185,14 @@ def alt_control(gps, vel, imu):
     calVelocity(vel)
     calImu(imu)
     calAltitude(gps)
-    rospy.Subscriber("alt_pid", Float64MultiArray, setPID) #!!
+    rospy.Subscriber("alt_pid", Float64MultiArray, setPID_alt) #!!
+    rospy.Subscriber("roll_pid", Float64MultiArray, setPID_roll) #!!
+    rospy.Subscriber("pitch_pid", Float64MultiArray, setPID_pitch) #!!
+    rospy.Subscriber("yaw_pid", Float64MultiArray, setPID_yaw) #!!
     k_alt = (kp,ki,kd)
+    k_roll = (kp_roll,ki_roll,kd_roll)
+    k_pitch = (kp_pitch,ki_pitch,kd_pitch)
+    k_yaw = (kp_yaw,ki_yaw,kd_yaw)
     print("\nAltitude = " + str(altitude))
     current_alt_err = req_alt - altitude
     print("Required alt = ",req_alt)
@@ -172,7 +205,7 @@ def alt_control(gps, vel, imu):
     #get information of the velocity and r p y of the drone
     
     #the goal is to get a function that stabilises the r p y of the drone while maintaining altitude
-    speed = PID_alt(roll, pitch, yaw, req_alt, altitude, k_alt, flag)
+    speed = PID_alt(roll, pitch, yaw, req_alt, altitude, k_alt, k_roll, k_pitch, k_yaw, flag)
     flag += 1
     message_pub.publish(speed)
 

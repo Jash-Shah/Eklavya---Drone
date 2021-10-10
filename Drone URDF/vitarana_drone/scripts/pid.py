@@ -12,7 +12,7 @@ from tf.transformations import euler_from_quaternion, quaternion_from_euler
 from std_msgs.msg import Float64, Float64MultiArray
 
 
-def PID_alt(roll, pitch, yaw, req_alt, altitude, k_alt, flag):
+def PID_alt(roll, pitch, yaw, req_alt, altitude, k_alt, k_roll, k_pitch, k_yaw, flag):
     #global variables are declared to avoid their values resetting to 0
     #global altitude #!!
     global prev_alt_err,i_term,d_term,p_term
@@ -23,15 +23,15 @@ def PID_alt(roll, pitch, yaw, req_alt, altitude, k_alt, flag):
     kp_thrust = k_alt[0]
     ki_thrust = k_alt[1]
     kd_thrust = k_alt[2]
-    kp_roll = 70
-    ki_roll = 0.0002
-    kd_roll = 89
-    kp_pitch = kp_roll
-    ki_pitch = ki_roll
-    kd_pitch = kd_roll
-    kp_yaw = 0.1
-    ki_yaw = 0
-    kd_yaw = 0
+    kp_roll = k_roll[0]
+    ki_roll = k_roll[1]
+    kd_roll = k_roll[2]
+    kp_pitch = k_pitch[0]
+    ki_pitch = k_pitch[1]
+    kd_pitch = k_pitch[2]
+    kp_yaw = k_yaw[0]
+    ki_yaw = k_yaw[1]
+    kd_yaw = k_yaw[2]
     #print("\nAltitude = " + str(altitude))
     #print("Required alt = ",req_alt)
     # rospy.init_node("pid_alt_node",anonymous=False)
@@ -131,11 +131,15 @@ def PID_alt(roll, pitch, yaw, req_alt, altitude, k_alt, flag):
     output_yaw = pMem_yaw + ki_yaw * iMem_yaw + kd_yaw * dMem_yaw 
 
     print("Altitude Correction = ",output_alt)
-    print("Flag = ",flag)
+    # print("Flag = ",flag)
     print("D Time = ",dTime)
-    print("P Term = ",p_term)
-    print("I Term = ",i_term)
-    print("D Term = ",d_term)
+    # print("P Term = ",p_term)
+    # print("I Term = ",i_term)
+    # print("D Term = ",d_term)
+    print("P Term = ",pMem_roll)
+    print("I Term = ",iMem_roll)
+    print("D Term = ",dMem_roll)
+    print("Roll Correction = ",output_roll)
 
     thrust = hover_speed + output_alt*2.5
 
@@ -158,7 +162,7 @@ def PID_alt(roll, pitch, yaw, req_alt, altitude, k_alt, flag):
     #Need to fine tune a lot
 
     #uncomment for only altitutde PID testing
-    output_roll=0
+    #output_roll=0 commented to test roll stabilisation
     output_pitch=0
     output_yaw=0
 
