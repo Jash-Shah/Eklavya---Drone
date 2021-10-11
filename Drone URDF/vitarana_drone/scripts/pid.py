@@ -34,7 +34,7 @@ def PID_alt(roll, pitch, yaw, req_alt, altitude, k_alt, k_roll, k_pitch, k_yaw, 
     kd_yaw = k_yaw[2]
     setpoint = 0 #this should change according to the desired r,p,y
 
-    #100% sure
+    #not 100% sure
     err_pitch = pitch - setpoint
     err_roll = roll - setpoint
     err_yaw = setpoint - yaw
@@ -119,6 +119,9 @@ def PID_alt(roll, pitch, yaw, req_alt, altitude, k_alt, k_roll, k_pitch, k_yaw, 
     prevErr_yaw = err_yaw
     prev_alt_err = current_alt_err
 
+
+    
+
     # Final output correction terms after combining PID
     output_alt = kp_thrust*pMem_alt + ki_thrust*iMem_alt + kd_thrust*dMem_alt
     output_roll = pMem_roll + ki_roll * iMem_roll + kd_roll * dMem_roll
@@ -161,11 +164,11 @@ def PID_alt(roll, pitch, yaw, req_alt, altitude, k_alt, k_roll, k_pitch, k_yaw, 
     speed = prop_speed()
     #uncomment for only altitutde PID testing
     # output_roll=0 
-    output_pitch=0
+    # output_pitch=0
     # output_yaw=0
 
 
-    speed.prop1 = (thrust - output_yaw + output_pitch - output_roll) 
+    speed.prop1 = (thrust - output_yaw + output_pitch - output_roll)
  
     speed.prop2 = (thrust + output_yaw + output_pitch + output_roll) 
   
@@ -186,3 +189,12 @@ def PID_alt(roll, pitch, yaw, req_alt, altitude, k_alt, k_roll, k_pitch, k_yaw, 
     rospy.loginfo(speed) 
 
     return(speed)
+
+
+def positionControl(roll, pitch, x, y):
+    #positive pitch value implies +ve X-direction
+    #positive roll value implies -ve Y-direction
+
+    #default latitude and longitude values are 19, 72 respectively
+
+    return (roll, pitch)
