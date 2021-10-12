@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<sdf version="1.6">
+  <world name="default">
+    <scene>
+      <shadows>false</shadows>
+      <grid>false</grid>
+      <origin_visual>false</origin_visual>
+      <sky>
+        <clouds>
+          <speed>4</speed>
+        </clouds>
+      </sky>
+    </scene>
+    <light type="directional" name="sun">
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 100 0 0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <attenuation>
+        <range>2000</range>
+        <constant>0.9</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <direction>-0.5 0.1 -0.9</direction>
+    </light>
+    <include>
+      <uri>model://sector</uri>
+      <static>true</static>
+    </include>
+    <include>
+      <uri>model://edrone</uri>
+      <static>true</static>
+      <pose>-84 19 16.36 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://landing_station</uri>
+      <name>"LS_1"</name>
+      <pose>-106.200000 -13.200000 10.750000 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://landing_station</uri>
+      <name>"LS_2"</name>
+      <pose>-93.5 19.66 22.20000 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://landing_station</uri>
+      <name>"LS_3"</name>
+      <pose>-71.5 4.6 10.7 0 0 1.57</pose>
+    </include>
+    <gui>
+      <camera name="user_camera">
+        <pose>-84.157021 14.379533 22.252850 0 0.940001 1.567200</pose>
+      </camera>
+    </gui> 
+    <plugin name="ros_link_attacher_plugin" filename="libgazebo_ros_link_attacher.so"/>
+  </world>
+</sdf>
