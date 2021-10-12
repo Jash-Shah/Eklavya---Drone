@@ -11,6 +11,7 @@ from geometry_msgs.msg import Vector3Stamped
 from geometry_msgs.msg import Vector3
 from tf.transformations import euler_from_quaternion, quaternion_from_euler
 from std_msgs.msg import Float64, Float64MultiArray
+from gazebo_msgs.msg import ModelStates
 
 
 # Initilization of all Parameters
@@ -36,6 +37,8 @@ kd_pitch = 0.541
 kp_yaw = 50
 ki_yaw = 0.01
 kd_yaw = 5
+x = 0.0
+y = 0.0
 
 # Flag for checking for the first time the script is run
 flag = 0
@@ -92,6 +95,7 @@ def calVelocity(msg):
     vel_x = msg.vector.x
     vel_y = msg.vector.y
     vel_z = msg.vector.z
+    
 
 
 # Gets current roll. pitch, yaw of drone from IMU sensor
@@ -106,10 +110,15 @@ def calImu(msg):
     angVel_y = msg.angular_velocity.y
     angVel_z = msg.angular_velocity.z
 
+def calPosition(pos):
+    global x,y
+    x = round(pos.pose[1].position.x,3)
+    y = round(pos.pose[1].position.y,3)
+
 
 def alt_control(gps, vel, imu):
     # Set all variables to global so as to keep them updated values
-    global altitude,req_alt,flag, kp,ki,kd,roll, pitch, yaw
+    global altitude,req_alt,flag, kp,ki,kd,roll, pitch, yaw, x, y
 
     # Gets drones current velocity
     calVelocity(vel)
@@ -122,7 +131,8 @@ def alt_control(gps, vel, imu):
     rospy.Subscriber("alt_pid", Float64MultiArray, setPID_alt) 
     rospy.Subscriber("roll_pid", Float64MultiArray, setPID_roll) 
     rospy.Subscriber("pitch_pid", Float64MultiArray, setPID_pitch) 
-    rospy.Subscriber("yaw_pid", Float64MultiArray, setPID_yaw) 
+    rospy.Subscriber("yaw_pid", Float64MultiArray, setPID_yaw)
+    rospy.Subscriber("/gazebo/model_states", ModelStates, calPosition) 
 
     # Combine the PID values into tuples so as to send easily to PID function
     k_alt = (kp,ki,kd)
@@ -140,9 +150,11 @@ def alt_control(gps, vel, imu):
     
     #We need the position controller to process the roll and pitch here
     #roll , pitch = positionControl(roll, pitch, )
-
+    current = (x,y)
+    target = (1.01,1.01)
+    velocity = (vel_x, vel_y, vel_z)
     #speed returned is the final motor speed after going through the motor mixing algorithm for all controllers
-    speed = PID_alt(roll, pitch, yaw, req_alt, altitude, k_alt, k_roll, k_pitch, k_yaw, flag)
+    speed = PID_alt(roll, pitch, yaw, req_alt, altitude, k_alt, k_roll, k_pitch, k_yaw, current, target, velocity, flag)
     flag += 1 
 
     # Publish the final motor speeds to the propellers

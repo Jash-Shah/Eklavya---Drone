@@ -11,9 +11,10 @@ from tf.transformations import euler_from_quaternion, quaternion_from_euler
 from std_msgs.msg import Float64, Float64MultiArray
 
 
-def PID_alt(roll, pitch, yaw, req_alt, altitude, k_alt, k_roll, k_pitch, k_yaw, flag): 
+def PID_alt(roll, pitch, yaw, req_alt, altitude, k_alt, k_roll, k_pitch, k_yaw, current, target, velocity, flag): 
     #global variables are declared to avoid their values resetting to 0
-    global prev_alt_err,iMem_alt,dMem_alt,pMem_alt
+    global prev_err_x, prev_err_y
+    global prev_alt_err,iMem_alt,dMem_alt,pMem_alt, dTime
     global prevTime,kp_roll, ki_roll, kd_roll, kp_pitch, ki_pitch, kd_pitch, kp_yaw, ki_yaw, kd_yaw, prevErr_roll, prevErr_pitch, prevErr_yaw, pMem_roll, pMem_yaw, pMem_pitch, iMem_roll, iMem_pitch, iMem_yaw, dMem_roll, dMem_pitch, dMem_yaw, setpoint, sample_time
     global kp_thrust, ki_thrust, kd_thrust
 
@@ -32,11 +33,20 @@ def PID_alt(roll, pitch, yaw, req_alt, altitude, k_alt, k_roll, k_pitch, k_yaw, 
     kp_yaw = k_yaw[0]
     ki_yaw = k_yaw[1]
     kd_yaw = k_yaw[2]
+    
+
     setpoint = 0 #this should change according to the desired r,p,y
 
+    if(flag == 0): 
+        dTime = 1
+        prev_err_x = 0
+        prev_err_y = 0
+    set_roll, set_pitch = positionControl(roll, pitch, current, target, velocity, dTime)
+
+
     #not 100% sure
-    err_pitch = pitch - setpoint
-    err_roll = roll - setpoint
+    err_pitch = pitch - set_pitch
+    err_roll = roll - set_roll
     err_yaw = setpoint - yaw
     current_alt_err = req_alt - altitude
 
@@ -73,6 +83,7 @@ def PID_alt(roll, pitch, yaw, req_alt, altitude, k_alt, k_roll, k_pitch, k_yaw, 
         prev_alt_err = 0
         iMem_alt = 0
         dMem_alt = 0
+        
 
     #Define all differential terms
     dTime = current_time - prevTime 
@@ -100,8 +111,8 @@ def PID_alt(roll, pitch, yaw, req_alt, altitude, k_alt, k_roll, k_pitch, k_yaw, 
         if(iMem_alt < -800): iMem_alt = -800
         if(iMem_roll > 400): iMem_roll = 400
         if(iMem_roll < -400): iMem_roll = -400
-        if(iMem_pitch > 400): iMem_pitch = 400
-        if(iMem_pitch < -400): iMem_pitch = -400
+        if(iMem_pitch > 10): iMem_pitch = 10
+        if(iMem_pitch < -10): iMem_pitch = -10
         if(iMem_yaw > 400): iMem_yaw = 400
         if(iMem_yaw < -400): iMem_yaw = 400
 
@@ -177,23 +188,76 @@ def PID_alt(roll, pitch, yaw, req_alt, altitude, k_alt, k_roll, k_pitch, k_yaw, 
     speed.prop4 = (thrust + output_yaw - output_pitch - output_roll) 
 
     #limit the speed
-    if(speed.prop1 > 1000): speed.prop1 = 1000
-    if(speed.prop2 > 1000): speed.prop2 = 1000
-    if(speed.prop3 > 1000): speed.prop3 = 1000
-    if(speed.prop4 > 1000): speed.prop4 = 1000 
+    if(speed.prop1 > 800): speed.prop1 = 800
+    if(speed.prop2 > 800): speed.prop2 = 800
+    if(speed.prop3 > 800): speed.prop3 = 800
+    if(speed.prop4 > 800): speed.prop4 = 800 
 
-    if(speed.prop1 < 0): speed.prop1 = 0
-    if(speed.prop2 < 0): speed.prop2 = 0
-    if(speed.prop3 < 0): speed.prop3 = 0
-    if(speed.prop4 < 0): speed.prop4 = 0 
+    if(speed.prop1 < 10): speed.prop1 = 10
+    if(speed.prop2 < 10): speed.prop2 = 10
+    if(speed.prop3 < 10): speed.prop3 = 10
+    if(speed.prop4 < 10): speed.prop4 = 10 
     rospy.loginfo(speed) 
 
     return(speed)
 
 
-def positionControl(roll, pitch, x, y):
+#take in the velocity in both the directions
+#higher the velocity already is, the closer the output should be towards 0
+#Should I write a PID? If so, this is feeding target pitch, roll points
+
+
+def positionControl(roll, pitch, current, target, velocity, dTime):
     #positive pitch value implies +ve X-direction
     #positive roll value implies -ve Y-direction
+    global prev_err_x, prev_err_y
+
+    kp = 0.001
+    ki = 0.000001
+    kd = 0.01
+    i_term_pitch = 0
+    i_term_roll = 0
+    c_x, c_y = current[0], current[1]
+    t_x, t_y = target[0], target[1]
+
+    vel_x = velocity[0]
+    vel_y = velocity[1]
+
+    err_x = c_x - t_x
+    err_y = c_y - t_y
+
+    # p_term_pitch = kp * err_x
+    # i_term_pitch += err_x * dTime 
+    # d_term_pitch = prev_err_x / dTime 
+    # if (i_term_pitch > 200): i_term_pitch = 200
+    # if (i_term_pitch < -200): i_term_pitch = -200
+
+    # pitch = -1 * (p_term_pitch + ki*i_term_pitch + kd*d_term_pitch)
+
+
+    # p_term_roll = kp * err_y
+    # i_term_roll += err_y * dTime
+    # if (i_term_roll > 200): i_term_roll = 200
+    # if (i_term_roll < -200): i_term_roll = -200
+    # d_term_roll = prev_err_y / dTime 
+
+    # roll = (p_term_roll + ki*i_term_roll + kd*d_term_pitch)
+
+    pitch = (err_x / (abs(t_x) + abs(c_x)) * 1.5) * -1
+    roll = err_y / (abs(t_y) + abs(c_y)) * 2.0
+
+    prev_err_x = err_x
+    prev_err_y = err_y
+
+    print("Target Roll = ", roll)
+    print("Target Pitch = ", pitch)
+
+    # if(roll > 2.5): roll = 2.5
+    # if(roll < -2.5): roll = -2.5
+
+    # if(pitch > 2.5): pitch = 2.5
+    # if(pitch < -2.5): pitch = -2.5
+
 
     #default latitude and longitude values are 19, 72 respectively
 
