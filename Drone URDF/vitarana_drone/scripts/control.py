@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 import rospy
 import time
-from pid import PID_alt
+from pid import *
 import message_filters
 from vitarana_drone.msg import prop_speed
 from rospy.topics import Publisher
@@ -34,9 +34,9 @@ kd = 35
 kp_roll = 0.2
 ki_roll = 0.00001
 kd_roll = 0.5
-kp_pitch = 0.1
+kp_pitch = 0.25
 ki_pitch = 0.001
-kd_pitch = 10
+kd_pitch = 0.63
 kp_yaw = 50
 ki_yaw = 0.01
 kd_yaw = 5
@@ -169,7 +169,7 @@ def alt_control(gps, vel, imu):
 
     # Logging for debugging purposes
     print("\nAltitude = " + str(altitude))
-    print("Required alt = ",req_alt)
+    # print("Required alt = ",req_alt)
     print("Roll =", roll)
     print("Pitch =", pitch)
     print("Yaw =", yaw)
@@ -178,7 +178,7 @@ def alt_control(gps, vel, imu):
     
     #the goal is to get a function that stabilises the r p y of the drone while maintaining altitude
     #speed returned is the final motor speed after going through the motor mixing algorithm for all controllers
-    speed = PID_alt(roll, pitch, yaw,x,y, req_alt, altitude, k_alt, k_roll, k_pitch, k_yaw, k_x,k_y,flag)
+    speed = PID_alt(roll, pitch, yaw,x,y, req_alt, altitude, k_alt, k_roll, k_pitch, k_yaw,k_x,k_y, flag)
     flag += 1 
 
     # Publish the final motor speeds to the propellers
