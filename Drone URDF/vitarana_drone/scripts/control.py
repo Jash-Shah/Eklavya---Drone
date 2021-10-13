@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 import rospy
 import time
-from pid import PID_alt, positionControl
+from pid import *
 import message_filters
 from vitarana_drone.msg import prop_speed
 from rospy.topics import Publisher
@@ -23,6 +23,9 @@ vel_z = 0
 roll = 0
 pitch = 0
 yaw = 0
+x = 0
+y = 0
+z  = 0
 
 # Giving default PID values incase no input from user
 kp = 20
@@ -33,13 +36,22 @@ ki_roll = 0.00001
 kd_roll = 0.5
 kp_pitch = 0.25
 ki_pitch = 0.001
-kd_pitch = 0.631
+kd_pitch = 0.63
 kp_yaw = 50
 ki_yaw = 0.01
 kd_yaw = 5
-x = 0.0
-y = 0.0
-
+kp_x = 1
+ki_x = 0.001
+kd_x = 10
+kp_y = 1
+ki_y = 0.001
+kd_y = 10
+kp_vel_x = 0
+ki_vel_x = 0
+kd_vel_x = 0
+kp_vel_y = 0
+ki_vel_y = 0
+kd_vel_y = 0
 # Flag for checking for the first time the script is run
 flag = 0
 
@@ -82,6 +94,20 @@ def setPID_yaw(msg):
     kd_yaw = msg.data[2]
 
 
+def setPID_x(msg):
+    global kp_x,ki_x,kd_x
+    kp_x = msg.data[0]
+    ki_x = msg.data[1]
+    kd_x = msg.data[2]
+
+    
+def setPID_y(msg):
+    global kp_y,ki_y,kd_y
+    kp_y = msg.data[0]
+    ki_y = msg.data[1]
+    kd_y = msg.data[2]
+
+
 # Gets current altitude  of drone from gps sensor
 def calAltitude(msg):
     global altitude
@@ -95,7 +121,6 @@ def calVelocity(msg):
     vel_x = msg.vector.x
     vel_y = msg.vector.y
     vel_z = msg.vector.z
-    
 
 
 # Gets current roll. pitch, yaw of drone from IMU sensor
@@ -110,15 +135,28 @@ def calImu(msg):
     angVel_y = msg.angular_velocity.y
     angVel_z = msg.angular_velocity.z
 
+
 def calPosition(pos):
-    global x,y
+    global x,y,z
     x = round(pos.pose[1].position.x,3)
     y = round(pos.pose[1].position.y,3)
+
+def setPID_vel_x(msg):
+    global kp_vel_x,ki_vel_x,kd_vel_x
+    kp_vel_x = msg.data[0]
+    ki_vel_x = msg.data[1]
+    kd_vel_x = msg.data[2]
+
+def setPID_vel_y(msg):
+    global kp_vel_y,ki_vel_y,kd_vel_y
+    kp_vel_y = msg.data[0]
+    ki_vel_y = msg.data[1]
+    kd_vel_y = msg.data[2]
 
 
 def alt_control(gps, vel, imu):
     # Set all variables to global so as to keep them updated values
-    global altitude,req_alt,flag, kp,ki,kd,roll, pitch, yaw, x, y
+    global altitude,req_alt,flag, kp,ki,kd,roll, pitch, yaw
 
     # Gets drones current velocity
     calVelocity(vel)
@@ -127,34 +165,40 @@ def alt_control(gps, vel, imu):
     # Gets drones current altitude
     calAltitude(gps)
 
+    rospy.Subscriber("/gazebo/model_states",ModelStates,calPosition )
+
     # Subsribe to all required topics to get PID for all controllers
     rospy.Subscriber("alt_pid", Float64MultiArray, setPID_alt) 
     rospy.Subscriber("roll_pid", Float64MultiArray, setPID_roll) 
     rospy.Subscriber("pitch_pid", Float64MultiArray, setPID_pitch) 
-    rospy.Subscriber("yaw_pid", Float64MultiArray, setPID_yaw)
-    rospy.Subscriber("/gazebo/model_states", ModelStates, calPosition) 
+    rospy.Subscriber("yaw_pid", Float64MultiArray, setPID_yaw) 
+    rospy.Subscriber("x_pid", Float64MultiArray, setPID_x) 
+    rospy.Subscriber("y_pid", Float64MultiArray, setPID_y) 
+    rospy.Subscriber("vel_x_pid", Float64MultiArray, setPID_vel_x) 
+    rospy.Subscriber("vel_y_pid", Float64MultiArray, setPID_vel_y) 
 
     # Combine the PID values into tuples so as to send easily to PID function
     k_alt = (kp,ki,kd)
     k_roll = (kp_roll,ki_roll,kd_roll)
     k_pitch = (kp_pitch,ki_pitch,kd_pitch)
     k_yaw = (kp_yaw,ki_yaw,kd_yaw)
+    k_x = (kp_x,ki_x,kd_x)
+    k_y = (kp_y,ki_y,kd_y)
+    velocity = (vel_x, vel_y, vel_z)
+    k_vel = (kp_vel_x,ki_vel_x,kd_vel_x,kp_vel_y,ki_vel_y,kd_vel_y)
 
     # Logging for debugging purposes
     print("\nAltitude = " + str(altitude))
-    print("Required alt = ",req_alt)
+    # print("Required alt = ",req_alt)
     print("Roll =", roll)
     print("Pitch =", pitch)
     print("Yaw =", yaw)
+    print("X = ",x)
+    print("Y = ",y)
     
-    
-    #We need the position controller to process the roll and pitch here
-    #roll , pitch = positionControl(roll, pitch, )
-    current = (x,y)
-    target = (1.01,1.01)
-    velocity = (vel_x, vel_y, vel_z)
+    #the goal is to get a function that stabilises the r p y of the drone while maintaining altitude
     #speed returned is the final motor speed after going through the motor mixing algorithm for all controllers
-    speed = PID_alt(roll, pitch, yaw, req_alt, altitude, k_alt, k_roll, k_pitch, k_yaw, current, target, velocity, flag)
+    speed = PID_alt(roll, pitch, yaw,x,y, req_alt, altitude, k_alt, k_roll, k_pitch, k_yaw, k_x, k_y, velocity, k_vel, flag)
     flag += 1 
 
     # Publish the final motor speeds to the propellers
@@ -163,7 +207,7 @@ def alt_control(gps, vel, imu):
 
 def control():
     # define global values for required parameters to avoid resetting to 0
-    global altitude, thrust
+    global altitude, thrust, speed
 
     # initialize node
     rospy.init_node("altitude", anonymous = False)  
