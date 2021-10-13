@@ -166,6 +166,7 @@ def alt_control(gps, vel, imu):
     k_yaw = (kp_yaw,ki_yaw,kd_yaw)
     k_x = (kp_x,ki_x,kd_x)
     k_y = (kp_y,ki_y,kd_y)
+    velocity = (vel_x, vel_y, vel_z)
 
     # Logging for debugging purposes
     print("\nAltitude = " + str(altitude))
@@ -178,7 +179,7 @@ def alt_control(gps, vel, imu):
     
     #the goal is to get a function that stabilises the r p y of the drone while maintaining altitude
     #speed returned is the final motor speed after going through the motor mixing algorithm for all controllers
-    speed = PID_alt(roll, pitch, yaw,x,y, req_alt, altitude, k_alt, k_roll, k_pitch, k_yaw,k_x,k_y, flag)
+    speed = PID_alt(roll, pitch, yaw,x,y, req_alt, altitude, k_alt, k_roll, k_pitch, k_yaw, k_x, k_y, velocity, flag)
     flag += 1 
 
     # Publish the final motor speeds to the propellers
