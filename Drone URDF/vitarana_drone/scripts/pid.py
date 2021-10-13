@@ -41,6 +41,9 @@ def PID_alt(roll, pitch, yaw, req_alt, altitude, k_alt, k_roll, k_pitch, k_yaw, 
         dTime = 1
         prev_err_x = 0
         prev_err_y = 0
+        set_roll = 0
+        set_pitch = 0
+    
     set_roll, set_pitch = positionControl(roll, pitch, current, target, velocity, dTime)
 
 
@@ -87,7 +90,7 @@ def PID_alt(roll, pitch, yaw, req_alt, altitude, k_alt, k_roll, k_pitch, k_yaw, 
 
     #Define all differential terms
     dTime = current_time - prevTime 
-    print("dTime = ",dTime)
+    # print("dTime = ",dTime)
     dErr_alt = current_alt_err - prev_alt_err 
     dErr_pitch = err_pitch - prevErr_pitch
     dErr_roll = err_roll - prevErr_roll
@@ -152,9 +155,9 @@ def PID_alt(roll, pitch, yaw, req_alt, altitude, k_alt, k_roll, k_pitch, k_yaw, 
     # print("D Term Roll= ",dMem_roll)
     print("Roll Error = ",err_roll)
     # print("Roll Correction = ",output_roll)
-    print("P Term Pitch= ",pMem_pitch)
-    print("I Term Pitch= ",iMem_pitch)
-    print("D Term Pitch= ",dMem_pitch)
+    # print("P Term Pitch= ",pMem_pitch)
+    # print("I Term Pitch= ",iMem_pitch)
+    # print("D Term Pitch= ",dMem_pitch)
     print("Pitch Error = ",err_pitch)
     # print("Pitch Correction = ",output_pitch)
     # print("P Term Yaw= ",pMem_yaw)
@@ -212,9 +215,14 @@ def positionControl(roll, pitch, current, target, velocity, dTime):
     #positive roll value implies -ve Y-direction
     global prev_err_x, prev_err_y
 
-    kp = 0.001
-    ki = 0.000001
-    kd = 0.01
+    kp_pitch = 0.001
+    ki_pitch = 0.000001
+    kd_pitch = 0.01
+
+    kp_roll = 0.001
+    ki_roll = 0.000001
+    kd_roll = 0.01
+
     i_term_pitch = 0
     i_term_roll = 0
     c_x, c_y = current[0], current[1]
@@ -226,28 +234,32 @@ def positionControl(roll, pitch, current, target, velocity, dTime):
     err_x = c_x - t_x
     err_y = c_y - t_y
 
-    # p_term_pitch = kp * err_x
-    # i_term_pitch += err_x * dTime 
-    # d_term_pitch = prev_err_x / dTime 
-    # if (i_term_pitch > 200): i_term_pitch = 200
-    # if (i_term_pitch < -200): i_term_pitch = -200
+    p_term_pitch = kp_pitch * err_x
+    i_term_pitch += err_x * dTime 
+    d_term_pitch = prev_err_x / dTime 
+    if (i_term_pitch > 200): i_term_pitch = 200
+    if (i_term_pitch < -200): i_term_pitch = -200
 
-    # pitch = -1 * (p_term_pitch + ki*i_term_pitch + kd*d_term_pitch)
+    pitch = -1 * (p_term_pitch + ki_pitch*i_term_pitch + kd_pitch*d_term_pitch)
 
 
-    # p_term_roll = kp * err_y
-    # i_term_roll += err_y * dTime
-    # if (i_term_roll > 200): i_term_roll = 200
-    # if (i_term_roll < -200): i_term_roll = -200
-    # d_term_roll = prev_err_y / dTime 
+    p_term_roll = kp_roll * err_y
+    i_term_roll += err_y * dTime
+    if (i_term_roll > 200): i_term_roll = 200
+    if (i_term_roll < -200): i_term_roll = -200
+    d_term_roll = prev_err_y / dTime 
 
-    # roll = (p_term_roll + ki*i_term_roll + kd*d_term_pitch)
+    roll = (p_term_roll + ki_roll*i_term_roll + kd_roll*d_term_roll)
 
-    pitch = (err_x / (abs(t_x) + abs(c_x)) * 1.5) * -1
-    roll = err_y / (abs(t_y) + abs(c_y)) * 2.0
+    # pitch = (err_x / (abs(t_x) + abs(c_x)) * 1.5) * -1
+    # roll = err_y / (abs(t_y) + abs(c_y)) * 2.0
 
     prev_err_x = err_x
     prev_err_y = err_y
+
+    max = abs(roll) if (abs(roll) > abs(pitch)) else abs(pitch)
+    roll = roll / max * 2.5
+    pitch = pitch / max * 2.5
 
     print("Target Roll = ", roll)
     print("Target Pitch = ", pitch)
