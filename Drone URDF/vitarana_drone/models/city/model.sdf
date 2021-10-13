@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<sdf version="1.4">
+    <model name="city">
+    	<static>true</static>
+      <link name="city">
+        <visual name="visual">
+          <geometry>
+            <mesh><uri>model://city/meshes/city.obj</uri></mesh>
+          </geometry>
+        </visual>
+        <collision name="collision">
+          <geometry>
+            <mesh><uri>model://city/meshes/city.obj</uri></mesh>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+</sdf>
