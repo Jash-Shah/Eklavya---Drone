@@ -94,7 +94,7 @@ def PID_alt(roll, pitch, yaw,x,y, req_alt, altitude, k_alt, k_roll, k_pitch, k_y
 
     #Define all differential terms
     dTime = current_time - prevTime 
-    print("dTime = ",dTime)
+    #print("dTime = ",dTime)
     dErr_alt = current_alt_err - prev_alt_err 
     dErr_pitch = err_pitch - prevErr_pitch
     dErr_roll = err_roll - prevErr_roll
@@ -210,6 +210,7 @@ def position_controller(target_x, target_y, x, y, velocity, k_vel, flag):
     global current_time,prevTime,dTime
     global prevErr_x,prevErr_y,pMem_x,pMem_y,iMem_x,iMem_y,dMem_x,dMem_y, prevErr_vel_x, prevErr_vel_y
     global pMem_vel_x, iMem_vel_x, dMem_vel_x
+    global pMem_vel_y, iMem_vel_y, dMem_vel_y
     global kp_x,ki_x,kd_x
     global kp_y,ki_y,kd_y
     global setpoint_pitch,setpoint_roll
@@ -234,12 +235,15 @@ def position_controller(target_x, target_y, x, y, velocity, k_vel, flag):
     err_vel_x = vel_x - 0
     err_vel_y = vel_y - 0
 
+    print("Vel X Error = ", err_vel_x)
     print("X Error = ",err_x)
     print("Y Error = ",err_y)
     x_err_pub = rospy.Publisher("/x_err", Float64, queue_size=10)
     x_err_pub.publish(err_x)
     y_err_pub = rospy.Publisher("/y_err", Float64, queue_size=10)
     y_err_pub.publish(err_y)
+    vel_x_err_pub = rospy.Publisher("/vel_x_err", Float64, queue_size=10)
+    vel_x_err_pub.publish(err_vel_x)
     if (flag==0):
         prevTime = 0
         prevErr_x = 0
@@ -277,7 +281,7 @@ def position_controller(target_x, target_y, x, y, velocity, k_vel, flag):
         iMem_vel_x += err_vel_x*dTime
         iMem_vel_y += err_vel_y*dTime
 
-        if(iMem_vel_x>10): iMem_vel_x = 10
+        if(iMem_vel_x>10000): iMem_vel_x = 10
         if(iMem_vel_x<-10): iMem_vel_x=-10
         if(iMem_vel_y>10): iMem_vel_y = 10
         if(iMem_vel_y<-10): iMem_vel_y=-10
@@ -291,9 +295,13 @@ def position_controller(target_x, target_y, x, y, velocity, k_vel, flag):
 
     prevErr_x = err_x
     prevErr_y = err_y
-    print("P Term X = ",pMem_x)
-    print("I Term X = ",iMem_x)
-    print("D Term X = ",dMem_x)
+    #print("P Term X = ",pMem_x)
+    #print("I Term X = ",iMem_x)
+    #print("D Term X = ",dMem_x)
+
+    print("P Term Vel X = ",pMem_vel_x)
+    print("I Term Vel X = ",iMem_vel_x)
+    print("D Term Vel X = ",dMem_vel_x)
 
     output_x = pMem_x + ki_x*iMem_x + kd_x*dMem_x
     output_y = pMem_y + ki_y*iMem_y + kd_y*dMem_y
@@ -319,7 +327,7 @@ def position_controller(target_x, target_y, x, y, velocity, k_vel, flag):
         output_x = -5
         print('MINIMUM HIT')
 
-    if(abs(err_x) > 2 or abs(vel_x) < 5):
+    if(abs(err_x) > 2 and abs(vel_x) < 1.5):
         setpoint_pitch = -(output_x)
     else:
         setpoint_pitch = -(output_vel_x)
