@@ -55,7 +55,7 @@ def PID_alt(roll, pitch, yaw,x,y, req_alt, altitude, k_alt, k_roll, k_pitch, k_y
     print("Setpoint roll = ",setpoint_roll)
 
     err_pitch = pitch - setpoint_pitch
-    err_roll = roll - 0
+    err_roll = roll - setpoint_roll
     err_yaw = 0 - yaw
     current_alt_err = req_alt - altitude
 
@@ -221,13 +221,13 @@ def position_controller(target_x, target_y, x, y, velocity, k_vel, flag):
     vel_y = velocity[1]
 
     
-    kp_vel_x = 0.05 #k_vel[0]
-    ki_vel_x = 0.003#k_vel[1]
-    kd_vel_x = 0    #k_vel[2]
+    kp_vel_x = k_vel[0]#0.0003
+    ki_vel_x = k_vel[1]#0.000185
+    kd_vel_x = k_vel[2]#0.00212
 
-    kp_vel_y = 0.05 #k_vel[3]
-    ki_vel_y = 0.003#k_vel[4]
-    kd_vel_y = 0    #k_vel[5]
+    kp_vel_y = k_vel[3]
+    ki_vel_y = k_vel[4]
+    kd_vel_y = k_vel[5]
     
 
     err_x = x - target_x
@@ -281,17 +281,25 @@ def position_controller(target_x, target_y, x, y, velocity, k_vel, flag):
         iMem_vel_x += err_vel_x*dTime
         iMem_vel_y += err_vel_y*dTime
 
-        if(iMem_vel_x>10000): iMem_vel_x = 10
-        if(iMem_vel_x<-10): iMem_vel_x=-10
+        if(iMem_vel_x>250): iMem_vel_x = 250
+        if(iMem_vel_x<-250): iMem_vel_x=-250
         if(iMem_vel_y>10): iMem_vel_y = 10
         if(iMem_vel_y<-10): iMem_vel_y=-10
+
         if(iMem_x>10): iMem_x = 10
         if(iMem_x<-10): iMem_x=-10
+        if(iMem_y>10): iMem_y = 10
+        if(iMem_y<-10): iMem_y=-10
 
         dMem_x = dErr_x/dTime
         dMem_y = dErr_y/dTime
         dMem_vel_x = dErr_vel_x/dTime
         dMem_vel_y = dErr_vel_y/dTime
+
+        if(dMem_vel_x>100): dMem_vel_x = 100
+        if(dMem_vel_x<-100): dMem_vel_x=-100
+        if(dMem_vel_y>100): dMem_vel_y= 100
+        if(dMem_vel_y<-100): dMem_vel_y=-100
 
     prevErr_x = err_x
     prevErr_y = err_y
@@ -306,7 +314,6 @@ def position_controller(target_x, target_y, x, y, velocity, k_vel, flag):
     output_x = pMem_x + ki_x*iMem_x + kd_x*dMem_x
     output_y = pMem_y + ki_y*iMem_y + kd_y*dMem_y
     output_vel_x = pMem_vel_x + ki_vel_x*iMem_vel_x + kd_vel_x*dMem_vel_x
-    #not commented these lines, but output roll is commented 
     output_vel_y = pMem_vel_y + ki_vel_y*iMem_vel_y + kd_vel_y*dMem_vel_y
 
 
@@ -319,12 +326,22 @@ def position_controller(target_x, target_y, x, y, velocity, k_vel, flag):
 
     # if(limit): output_x = 0
 
-
+    print("Output Velocity X Term is = ", output_vel_x)
+    print("Output Velocity Y Term is = ", output_vel_y)
+    print("Kp Y = ", kp_y)
+    print("Kp Vel Y = ", kp_vel_y)
     if(output_x>5):
         output_x = 5
         print('MAXIMUM HIT')
     if(output_x<-5):
         output_x = -5
+        print('MINIMUM HIT')
+
+    if(output_y>5):
+        output_y = 5
+        print('MAXIMUM HIT')
+    if(output_y<-5):
+        output_y = -5
         print('MINIMUM HIT')
 
     if(abs(err_x) > 2 and abs(vel_x) < 1.5):
@@ -335,12 +352,13 @@ def position_controller(target_x, target_y, x, y, velocity, k_vel, flag):
 
     #setpoint_pitch = err_x + dErr_x
 
-    # if(abs(err_y) > 2 or abs(vel_y) < 5):
-    #     setpoint_roll = output_y
-    # else:
-    #     setpoint_roll = output_vel_y
+    if(abs(err_y) > 2 or abs(vel_y) < 1.5):
+        setpoint_roll = output_y
+    else:
+        setpoint_roll = output_vel_y
 
-    setpoint_roll = output_y
+
+    
 
 
 # import rospy
