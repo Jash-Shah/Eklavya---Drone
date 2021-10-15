@@ -72,8 +72,7 @@ Drone aviation is an emerging industry. With possibilities for its applications 
 * Tested on [Ubuntu 20.04](https://ubuntu.com/download/desktop)
 * [ROS Noetic](http://wiki.ros.org/noetic/Installation)
 * [Gazebo Sim](http://gazebosim.org/)
-Do visit these websites for the installation steps of the above mentioned software. 
-It is recommended to install Gazebo along with ROS and not seperately
+* Do visit these websites for the installation steps of the above mentioned software. It is recommended to install Gazebo along with ROS and not seperately
 
 ### Installation
 
@@ -117,7 +116,7 @@ Or a gif of you typing said commands*
 - [x] Create a control system for the drone using PID
 - [x] Stabilise the Roll, Pitch and Yaw of the Drone 
 - [x] Get the drone to fly at any arbitrary altitude
-- [] Have the drone fly to given co-ordinates and stabilise itself
+- [ ] Have the drone fly to given co-ordinates and stabilise itself
 
 <!-- CONTRIBUTORS -->
 ## Contributors
