@@ -69,7 +69,7 @@ Drone aviation is an emerging industry. With possibilities for its applications 
 ## Getting Started
 
 ### Prerequisites and installlation
-* Tested on [Ubuntu 20.04])(https://ubuntu.com/download/desktop)
+* Tested on [Ubuntu 20.04](https://ubuntu.com/download/desktop)
 * [ROS Noetic](http://wiki.ros.org/noetic/Installation)
 * [Gazebo Sim](http://gazebosim.org/)
 Do visit these websites for the installation steps of the above mentioned software. 
