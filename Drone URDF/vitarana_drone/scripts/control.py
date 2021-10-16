@@ -34,19 +34,24 @@ kd = 35
 kp_roll = 0.2
 ki_roll = 0.00001
 kd_roll = 0.5
-kp_pitch = 0.25
-ki_pitch = 0.001
-kd_pitch = 0.63
+kp_pitch = 0.15
+ki_pitch = 0.00001
+kd_pitch = 0.1
 kp_yaw = 50
 ki_yaw = 0.01
 kd_yaw = 5
-kp_x = 1
-ki_x = 0.001
-kd_x = 10
-kp_y = 1
+kp_x = 0.15
+ki_x = 0.00001
+kd_x = 0.01
+kp_y = 0.15
 ki_y = 0.001
-kd_y = 10
-
+kd_y = 0.003
+kp_vel_x = 0.05
+ki_vel_x = 0.003
+kd_vel_x = 0
+kp_vel_y = 0.05
+ki_vel_y = 0.003
+kd_vel_y = 0
 # Flag for checking for the first time the script is run
 flag = 0
 
@@ -136,6 +141,17 @@ def calPosition(pos):
     x = round(pos.pose[1].position.x,3)
     y = round(pos.pose[1].position.y,3)
 
+def setPID_vel_x(msg):
+    global kp_vel_x,ki_vel_x,kd_vel_x
+    kp_vel_x = msg.data[0]
+    ki_vel_x = msg.data[1]
+    kd_vel_x = msg.data[2]
+
+def setPID_vel_y(msg):
+    global kp_vel_y,ki_vel_y,kd_vel_y
+    kp_vel_y = msg.data[0]
+    ki_vel_y = msg.data[1]
+    kd_vel_y = msg.data[2]
 
 
 def alt_control(gps, vel, imu):
@@ -158,6 +174,8 @@ def alt_control(gps, vel, imu):
     rospy.Subscriber("yaw_pid", Float64MultiArray, setPID_yaw) 
     rospy.Subscriber("x_pid", Float64MultiArray, setPID_x) 
     rospy.Subscriber("y_pid", Float64MultiArray, setPID_y) 
+    rospy.Subscriber("vel_x_pid", Float64MultiArray, setPID_vel_x) 
+    rospy.Subscriber("vel_y_pid", Float64MultiArray, setPID_vel_y) 
 
     # Combine the PID values into tuples so as to send easily to PID function
     k_alt = (kp,ki,kd)
@@ -167,6 +185,7 @@ def alt_control(gps, vel, imu):
     k_x = (kp_x,ki_x,kd_x)
     k_y = (kp_y,ki_y,kd_y)
     velocity = (vel_x, vel_y, vel_z)
+    k_vel = (kp_vel_x,ki_vel_x,kd_vel_x,kp_vel_y,ki_vel_y,kd_vel_y)
 
     # Logging for debugging purposes
     print("\nAltitude = " + str(altitude))
@@ -179,7 +198,7 @@ def alt_control(gps, vel, imu):
     
     #the goal is to get a function that stabilises the r p y of the drone while maintaining altitude
     #speed returned is the final motor speed after going through the motor mixing algorithm for all controllers
-    speed = PID_alt(roll, pitch, yaw,x,y, req_alt, altitude, k_alt, k_roll, k_pitch, k_yaw, k_x, k_y, velocity, flag)
+    speed = PID_alt(roll, pitch, yaw,x,y, req_alt, altitude, k_alt, k_roll, k_pitch, k_yaw, k_x, k_y, velocity, k_vel, flag)
     flag += 1 
 
     # Publish the final motor speeds to the propellers
