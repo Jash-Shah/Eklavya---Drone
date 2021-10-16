@@ -130,7 +130,7 @@ Or a gif of you typing said commands*
 * [E-Yantra IIT-B](https://new.e-yantra.org/) for the plugins as well as the model of the drone. 
 * [Nishanth Rao](https://github.com/NishanthARao/ROS-Quadcopter-Simulation) for the template of the PID controllers
 * [Tim Wescott](http://wescottdesign.com/articles/pid/pidWithoutAPhd.pdf) for the paper PID without PhD which was extremely illuminating for beginners in PID
-* Our mentors [Saad Hasmi](), [Karthik Swaminathan]() and [Dhruvi Doshi]() for their guidance throughout the whole project
+* Our mentors [Saad Hasmi](https://github.com/hashmis79), [Karthik Swaminathan]() and [Dhruvi Doshi]() for their guidance throughout the whole project
 
 <!-- -->
 ## License
