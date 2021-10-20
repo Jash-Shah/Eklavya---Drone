@@ -105,6 +105,7 @@ rosrun vitarana_drone control.py
 
 *Insert image of how it looks like executed here
 Or a gif of you typing said commands*
+<img src="assets/terminal_start.gif" width="640" height="480" />
 
 
 <!-- RESULTS AND DEMO -->
