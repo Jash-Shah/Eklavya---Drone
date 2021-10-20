@@ -112,6 +112,9 @@ Or a gif of you typing said commands*
 ## Results and Demo
 *Add the videos, gifs and other things here*
 
+Drone at start of the program
+<img src="assets/drone_start.png">
+
 <!-- FUTURE WORK -->
 ## Future Work
 - [x] Create a control system for the drone using PID
