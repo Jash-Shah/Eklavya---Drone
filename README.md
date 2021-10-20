@@ -116,7 +116,11 @@ Drone at start of the program:
 <img src="assets/drone_start.png">
 
 Drone when an altitude is given in control.py:  
-<img src="assets/drone_hover.gif">
+
+https://user-images.githubusercontent.com/31101072/138051009-1865b520-fffc-4537-b7e5-d3fc35edf76c.mp4
+
+
+
 
 <!-- FUTURE WORK -->
 ## Future Work
