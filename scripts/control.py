@@ -34,9 +34,9 @@ kd = 35
 kp_roll = 0.2
 ki_roll = 0.00001
 kd_roll = 0.5
-kp_pitch = 0.25
-ki_pitch = 0.001
-kd_pitch = 0.63
+kp_pitch = 0.15 #0.25
+ki_pitch = 0.00001 #0.001
+kd_pitch = 0.1#0.63
 kp_yaw = 50
 ki_yaw = 0.01
 kd_yaw = 5
@@ -44,8 +44,8 @@ kp_x = 0.15
 ki_x = 0.003
 kd_x = 0.001
 kp_y = 0.15
-ki_y = 0.003
-kd_y = 0.003
+ki_y = 0.00
+kd_y = 0.0085
 kp_vel_x = 0.0001
 ki_vel_x = 0.0000035
 kd_vel_x = 0.00112
@@ -59,7 +59,7 @@ flag = 0
 message_pub = rospy.Publisher("/edrone/pwm", prop_speed, queue_size=1000)
 
 # Ask the user for the required height the drone should hover at
-req_alt = float(input("Enter height drone should hover at : "))
+target_x,target_y,req_alt = map(float,input("Enter X,Y,Z coordinates of target : ").split())
 
 
 # Gets altitude PID published to node
@@ -156,7 +156,7 @@ def setPID_vel_y(msg):
 
 def alt_control(gps, vel, imu):
     # Set all variables to global so as to keep them updated values
-    global altitude,req_alt,flag, kp,ki,kd,roll, pitch, yaw
+    global altitude,req_alt,flag, kp,ki,kd,roll, pitch, yaw,target_x,target_y
 
     # Gets drones current velocity
     calVelocity(vel)
@@ -186,6 +186,7 @@ def alt_control(gps, vel, imu):
     k_y = (kp_y,ki_y,kd_y)
     velocity = (vel_x, vel_y, vel_z)
     k_vel = (kp_vel_x,ki_vel_x,kd_vel_x,kp_vel_y,ki_vel_y,kd_vel_y)
+    target = (target_x,target_y,req_alt)
 
     # Logging for debugging purposes
     print("\nAltitude = " + str(altitude))
@@ -198,7 +199,7 @@ def alt_control(gps, vel, imu):
     
     #the goal is to get a function that stabilises the r p y of the drone while maintaining altitude
     #speed returned is the final motor speed after going through the motor mixing algorithm for all controllers
-    speed = PID_alt(roll, pitch, yaw,x,y, req_alt, altitude, k_alt, k_roll, k_pitch, k_yaw, k_x, k_y, velocity, k_vel, flag)
+    speed = PID_alt(roll, pitch, yaw,x,y, target, altitude, k_alt, k_roll, k_pitch, k_yaw, k_x, k_y, velocity, k_vel, flag)
     flag += 1 
 
     # Publish the final motor speeds to the propellers

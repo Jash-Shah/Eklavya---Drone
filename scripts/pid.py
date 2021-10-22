@@ -11,11 +11,11 @@ from tf.transformations import euler_from_quaternion, quaternion_from_euler
 from std_msgs.msg import Float64, Float64MultiArray
 
 
-def PID_alt(roll, pitch, yaw,x,y, req_alt, altitude, k_alt, k_roll, k_pitch, k_yaw, k_x, k_y, velocity, k_vel, flag): 
+def PID_alt(roll, pitch, yaw,x,y,target, altitude, k_alt, k_roll, k_pitch, k_yaw, k_x, k_y, velocity, k_vel, flag): 
     #global variables are declared to avoid their values resetting to 0
     global prev_alt_err,iMem_alt,dMem_alt,pMem_alt
     global prevTime,kp_roll, ki_roll, kd_roll, kp_pitch, ki_pitch, kd_pitch, kp_yaw, ki_yaw, kd_yaw, prevErr_roll, prevErr_pitch, prevErr_yaw, pMem_roll, pMem_yaw, pMem_pitch, iMem_roll, iMem_pitch, iMem_yaw, dMem_roll, dMem_pitch, dMem_yaw, setpoint_roll,setpoint_pitch, sample_time,current_time
-    global kp_x,ki_x,kd_x,kp_y,ki_y,kd_y,target_x,target_y
+    global kp_x,ki_x,kd_x,kp_y,ki_y,kd_y,target_x,target_y,req_alt
     global kp_thrust, ki_thrust, kd_thrust
 
     #--------------------------------------------------------------------
@@ -41,8 +41,9 @@ def PID_alt(roll, pitch, yaw,x,y, req_alt, altitude, k_alt, k_roll, k_pitch, k_y
     kd_y = k_y[2]
     setpoint_roll = 0  #this should change according to the desired r,p,y
     setpoint_pitch = 0  #this should change according to the desired r,p,y
-    target_x = 1
-    target_y = 0
+    target_x = target[0]
+    target_y = target[1]
+    req_alt = target[2]
     sample_time = 0.005
 
     current_time = time.time()
