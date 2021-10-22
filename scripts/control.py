@@ -4,6 +4,7 @@ import time
 from pid import *
 import message_filters
 from vitarana_drone.msg import prop_speed
+from vitarana_drone.msg import edrone_cmd
 from rospy.topics import Publisher
 from sensor_msgs.msg import NavSatFix
 from sensor_msgs.msg import Imu
@@ -34,24 +35,24 @@ kd = 35
 kp_roll = 0.2
 ki_roll = 0.00001
 kd_roll = 0.5
-kp_pitch = 0.25
+kp_pitch = 0.15
 ki_pitch = 0.001
-kd_pitch = 0.63
+kd_pitch = 0.1
 kp_yaw = 50
 ki_yaw = 0.01
 kd_yaw = 5
-kp_x = 0.15
-ki_x = 0.003
-kd_x = 0.001
-kp_y = 0.15
-ki_y = 0.003
-kd_y = 0.003
-kp_vel_x = 0.0001
-ki_vel_x = 0.0000035
-kd_vel_x = 0.00112
-kp_vel_y = 0.0001
-ki_vel_y = 0.000035
-kd_vel_y = 0.00112
+kp_x = 0.13
+ki_x = 0
+kd_x = 0.00015
+kp_y = 0.13
+ki_y = 0
+kd_y = 0.00015
+kp_vel_x = 0.1
+ki_vel_x = 0
+kd_vel_x = 0.071
+kp_vel_y = 0.01
+ki_vel_y = 0.0
+kd_vel_y = 0.0071
 # Flag for checking for the first time the script is run
 flag = 0
 
