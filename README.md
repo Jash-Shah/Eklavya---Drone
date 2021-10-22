@@ -105,11 +105,22 @@ rosrun vitarana_drone control.py
 
 *Insert image of how it looks like executed here
 Or a gif of you typing said commands*
+<img src="assets/terminal_start.gif" width="640" height="480" />
 
 
 <!-- RESULTS AND DEMO -->
 ## Results and Demo
 *Add the videos, gifs and other things here*
+
+Drone at start of the program:  
+<img src="assets/drone_start.png">
+
+Drone when an altitude is given in control.py:  
+
+https://user-images.githubusercontent.com/31101072/138051009-1865b520-fffc-4537-b7e5-d3fc35edf76c.mp4
+
+
+
 
 <!-- FUTURE WORK -->
 ## Future Work
@@ -130,7 +141,7 @@ Or a gif of you typing said commands*
 * [E-Yantra IIT-B](https://new.e-yantra.org/) for the plugins as well as the model of the drone. 
 * [Nishanth Rao](https://github.com/NishanthARao/ROS-Quadcopter-Simulation) for the template of the PID controllers
 * [Tim Wescott](http://wescottdesign.com/articles/pid/pidWithoutAPhd.pdf) for the paper PID without PhD which was extremely illuminating for beginners in PID
-* Our mentors [Saad Hasmi](), [Karthik Swaminathan](https://github.com/kart1802) and [Dhruvi Doshi](https://github.com/dhruvi29) for their guidance throughout the whole project
+* Our mentors [Saad Hasmi](https://github.com/hashmis79), [Karthik Swaminathan](https://github.com/kart1802) and [Dhruvi Doshi](https://github.com/dhruvi29) for their guidance throughout the whole project
 
 <!-- -->
 ## License
