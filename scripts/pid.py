@@ -270,7 +270,10 @@ def position_controller(target_x, target_y, x, y, velocity, k_vel, flag):
     dErr_vel_x = err_vel_x - prevErr_vel_x
     dErr_vel_y = err_vel_y - prevErr_vel_y
 
-    if(dTime >=sample_time):
+    sample_time = 0.1
+
+
+    if(dTime >= sample_time):
         pMem_x = kp_x*err_x
         pMem_y = kp_y*err_y
         pMem_vel_x = kp_vel_x*err_x
@@ -345,18 +348,33 @@ def position_controller(target_x, target_y, x, y, velocity, k_vel, flag):
         output_y = -5
         print('MINIMUM HIT')
 
-    if(abs(err_x) > 2 and abs(vel_x) < 1.5):
+    if(abs(err_x) > 4 ):#and abs(vel_x) < 1.5):
         setpoint_pitch = -(output_x)
     else:
-        setpoint_pitch = -(output_vel_x)
+        setpoint_pitch = 0
+        #setpoint_pitch = -(output_vel_x)
+
+    #equation for correction
+    if(abs(err_x) < 4 and abs(vel_x) > 0.35):
+        dampner = (1/vel_x) * 0.01
+        print("Dampner: ", dampner)
+        setpoint_pitch = -(vel_x * 1.01 * 1.0 - dampner) #in the direction opposite to velocity
+        setpoint_pitch = 10 if (setpoint_pitch > 10) else setpoint_pitch 
+        setpoint_pitch = -10 if (setpoint_pitch < -10) else setpoint_pitch 
+        print("Correction")
 
 
     #setpoint_pitch = err_x + dErr_x
 
-    if(abs(err_y) > 2 or abs(vel_y) < 1.5):
+    if(abs(err_y) > 2 ):#and abs(vel_y) < 1.5):
         setpoint_roll = output_y
     else:
-        setpoint_roll = output_vel_y
+        setpoint_roll = 0
+        #setpoint_roll = output_vel_y
+    
+    if(abs(err_y) < 4 and abs(vel_y) > 0.3):
+        setpoint_roll = (vel_y * 2.35 * 1.0) #in the direction opposite to velocity
+        print("Correction")
 
 
     
