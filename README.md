@@ -23,7 +23,6 @@ Building a drone and developing its control system
 <!--ABOUT THE PROJECT -->
 ## About The Project
 Drone aviation is an emerging industry. With possibilities for its applications in agriculture, healthcare, e-commerce as well as traffic control. We wanted to get first hand experience with how a drone is designed as well as how it flies to get a firm grasp on the principles needed to work with drones in the future
-*Insert image here*
 
 
 ### Tech Stack
@@ -103,14 +102,13 @@ source ~/catkin_ws/devel/setup.bash
 rosrun vitarana_drone control.py
 ```
 
-*Insert image of how it looks like executed here
-Or a gif of you typing said commands*
+
 <img src="assets/terminal_start.gif" width="640" height="480" />
 
 
 <!-- RESULTS AND DEMO -->
 ## Results and Demo
-*Add the videos, gifs and other things here*
+
 
 Drone at start of the program:  
 
@@ -118,7 +116,10 @@ Drone at start of the program:
 
 Drone when an altitude is given in control.py:  
 
-<img src="assets/drone_hover.gif">
+https://user-images.githubusercontent.com/31101072/138051009-1865b520-fffc-4537-b7e5-d3fc35edf76c.mp4
+
+
+
 
 <!-- FUTURE WORK -->
 ## Future Work
@@ -139,7 +140,7 @@ Drone when an altitude is given in control.py:
 * [E-Yantra IIT-B](https://new.e-yantra.org/) for the plugins as well as the model of the drone. 
 * [Nishanth Rao](https://github.com/NishanthARao/ROS-Quadcopter-Simulation) for the template of the PID controllers
 * [Tim Wescott](http://wescottdesign.com/articles/pid/pidWithoutAPhd.pdf) for the paper PID without PhD which was extremely illuminating for beginners in PID
-* Our mentors [Saad Hasmi](https://github.com/hashmis79), [Karthik Swaminathan]() and [Dhruvi Doshi]() for their guidance throughout the whole project
+* Our mentors [Saad Hashmi](https://github.com/hashmis79), [Karthik Swaminathan](https://github.com/kart1802) and [Dhruvi Doshi](https://github.com/dhruvi29) for their guidance throughout the whole project
 
 <!-- -->
 ## License

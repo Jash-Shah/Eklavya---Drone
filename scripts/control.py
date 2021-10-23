@@ -4,6 +4,7 @@ import time
 from pid import *
 import message_filters
 from vitarana_drone.msg import prop_speed
+from vitarana_drone.msg import edrone_cmd
 from rospy.topics import Publisher
 from sensor_msgs.msg import NavSatFix
 from sensor_msgs.msg import Imu
@@ -34,24 +35,24 @@ kd = 35
 kp_roll = 0.2
 ki_roll = 0.00001
 kd_roll = 0.5
-kp_pitch = 0.25
+kp_pitch = 0.15
 ki_pitch = 0.001
-kd_pitch = 0.63
+kd_pitch = 0.1
 kp_yaw = 50
 ki_yaw = 0.01
 kd_yaw = 5
-kp_x = 0.15
-ki_x = 0.003
-kd_x = 0.001
-kp_y = 0.15
-ki_y = 0.003
-kd_y = 0.003
-kp_vel_x = 0.0001
-ki_vel_x = 0.0000035
-kd_vel_x = 0.00112
-kp_vel_y = 0.0001
-ki_vel_y = 0.000035
-kd_vel_y = 0.00112
+kp_x = 0.13
+ki_x = 0
+kd_x = 0.00015
+kp_y = 0.13
+ki_y = 0
+kd_y = 0.00015
+kp_vel_x = 0.1
+ki_vel_x = 0
+kd_vel_x = 0.071
+kp_vel_y = 0.01
+ki_vel_y = 0.0
+kd_vel_y = 0.0071
 # Flag for checking for the first time the script is run
 flag = 0
 
@@ -59,7 +60,7 @@ flag = 0
 message_pub = rospy.Publisher("/edrone/pwm", prop_speed, queue_size=1000)
 
 # Ask the user for the required height the drone should hover at
-req_alt = float(input("Enter height drone should hover at : "))
+target_x,target_y,req_alt = map(float,input("Enter X,Y,Z coordinates of target : ").split())
 
 
 # Gets altitude PID published to node
@@ -156,7 +157,7 @@ def setPID_vel_y(msg):
 
 def alt_control(gps, vel, imu):
     # Set all variables to global so as to keep them updated values
-    global altitude,req_alt,flag, kp,ki,kd,roll, pitch, yaw
+    global altitude,req_alt,flag, kp,ki,kd,roll, pitch, yaw,target_x,target_y
 
     # Gets drones current velocity
     calVelocity(vel)
@@ -186,6 +187,7 @@ def alt_control(gps, vel, imu):
     k_y = (kp_y,ki_y,kd_y)
     velocity = (vel_x, vel_y, vel_z)
     k_vel = (kp_vel_x,ki_vel_x,kd_vel_x,kp_vel_y,ki_vel_y,kd_vel_y)
+    target = (target_x,target_y,req_alt)
 
     # Logging for debugging purposes
     print("\nAltitude = " + str(altitude))
@@ -198,7 +200,7 @@ def alt_control(gps, vel, imu):
     
     #the goal is to get a function that stabilises the r p y of the drone while maintaining altitude
     #speed returned is the final motor speed after going through the motor mixing algorithm for all controllers
-    speed = PID_alt(roll, pitch, yaw,x,y, req_alt, altitude, k_alt, k_roll, k_pitch, k_yaw, k_x, k_y, velocity, k_vel, flag)
+    speed = PID_alt(roll, pitch, yaw,x,y, target, altitude, k_alt, k_roll, k_pitch, k_yaw, k_x, k_y, velocity, k_vel, flag)
     flag += 1 
 
     # Publish the final motor speeds to the propellers
@@ -218,8 +220,6 @@ def control():
     imu_sub = message_filters.Subscriber("/edrone/imu/data", Imu)
     ts = message_filters.TimeSynchronizer([gps_sub, vel_sub, imu_sub], 2)
 
-    #one of these publishers is slower than the others
-    #which is why the messages are loading relatively slowly
     ts.registerCallback(alt_control)
     rospy.spin()
        
@@ -231,142 +231,3 @@ if __name__=='__main__':
     except rospy.ROSInterruptException:
         pass
         
-
-
-# Alt input from user = req_alt = drone hover at that alt
-# Sub_gps = current_alt
-# Sub_Imu = curent r p y
-# rqt_console (sliders for kp,ki,kd) ->rostopic(pid_topic)->Sub(take in the kp,ki,kd(enter deafult vals))
-# x -> forward R
-# y->left G
-# z->forward B
-# prop1 = front left
-# prop2 = front right
-# prop3 = back right
-# prop4 = back left
-
-# alt_err = req_alt - current_alt 
-
-# calAltPID(msg):
-#     global kp,ki,kd
-#     (kp,ki,kd) = msg_list
-
-# PID_alt(alt_err)
-#     hover_speed = 508.75  
-#     Sub("pid_alt",calAltPID)
-#     if 0th iteration:
-#         current_alt_err = 0
-#         prev_time = 0
-#         prev_alt_err = 0
-#         i_term = 0
-    
-#     derr = current_alt_err - prev_alt_err
-#     dtime = current_time - prev_time
-#     current_alt_err = alt_err
-
-#     p_term = kp*alt_err
-#     d_term = kd*derr/dtime
-#     i_term += ki*dtime    
-    
-#     output_err = p_term + i_term + d_term
-
-#     thrust = hover_speed + output_err*1.5
-#     return thrust
-
-
-
-
-# 	#fr in my code is fl in gazebo's world
-# 	motor_fr = thrust + output_yaw + output_pitch + output_roll  
-# 	#fl in my code is bl in gazebo's world
-# 	motor_fl = thrust - output_yaw + output_pitch - output_roll  
-#     #br in my code is fr in gazebo's world
-# 	motor_br = thrust - output_yaw - output_pitch + output_roll  
-# 	#bl in my code is br in gazebo's world
-# 	motor_bl = thrust + output_yaw - output_pitch - output_roll 
-
-    
-
-
-# def PID_alts(gps, vel, imu):
-    
-#     global altitude #!!
-#     global req_alt
-#     global flag
-#     global thrust
-#     global speed
-#     global rate
-#     global prev_time,prev_alt_err,i_term,d_term,p_term
-#     global roll, pitch, yaw
-#     global flag
-#     altitude  = gps.altitude
-#     print("\nAltitude = " + str(altitude))
-#     current_alt_err = req_alt - altitude
-#     print("Required alt = ",req_alt)
-#     # rospy.init_node("pid_alt_node",anonymous=False)
-#     rospy.Subscriber("alt_pid", Float64MultiArray, setPID) #!!
-#     #calVelocity(vel)
-#     #calImu(imu)
-
-    
-#     # print("roll - control",roll)
-#     # print("pitch - control",pitch)
-#     # print("yaw - control",yaw)
-    
-#     print("kp = ",kp)
-#     print("ki = ",ki)
-#     print("kd = ",kd)
-#     hover_speed = 508.75
-#     sample_time = 0
-#     current_time = time.time()
-#     # print("Current time = ",current_time)
-#     if flag == 0:
-#         prev_time = 0
-#         prev_alt_err = 0
-#         i_term = 0
-#         d_term = 0
-        
-
-#     dTime = current_time - prev_time
-#     dErr_alt = current_alt_err -prev_alt_err
-
-#     if (dTime >= sample_time):
-#         if flag==0:
-#             p_term = 0
-#             i_term = 0
-#             d_term = 0
-#             flag+=1
-#         else:
-#             p_term = current_alt_err
-#             i_term += current_alt_err * dTime
-#             d_term =  dErr_alt/dTime
-
-#     prev_time = current_time
-#     prev_alt_err = current_alt_err
-
-#     output_alt = kp*p_term + ki*i_term + kd*d_term
-
-#     print("Altitude Correction = ",output_alt)
-#     thrust = hover_speed + output_alt*10
-
-#     #we need to limit this thrust
-#     if(thrust > 1000): 
-#         thrust = 1000
-#     elif(thrust < 0):
-#         thrust = 0
-    
-#     print("Thrust = ",thrust)
-
-#     speed = prop_speed()
-#     speed.prop1 = thrust
-#     speed.prop2 = thrust
-#     speed.prop3 = thrust
-#     speed.prop4 = thrust
-#     rospy.loginfo(speed) #!!!
-#     message_pub.publish(speed)
-
-#     # while not rospy.is_shutdown():
-#     #     message_pub.publish(speed)
-
-
-
