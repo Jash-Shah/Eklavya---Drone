@@ -36,14 +36,14 @@ kp_roll = 0.2
 ki_roll = 0.00001
 kd_roll = 0.5
 kp_pitch = 0.15
-ki_pitch = 0.001
+ki_pitch = 0.00001
 kd_pitch = 0.1
 kp_yaw = 50
 ki_yaw = 0.01
 kd_yaw = 5
 kp_x = 0.13
-ki_x = 0
-kd_x = 0.00015
+ki_x = 0.00001
+kd_x =  0.003 #0.00015
 kp_y = 0.13
 ki_y = 0
 kd_y = 0.00015
@@ -59,7 +59,7 @@ flag = 0
 # Message to publish final motor speeds to propellers
 message_pub = rospy.Publisher("/edrone/pwm", prop_speed, queue_size=1000)
 
-# Ask the user for the required height the drone should hover at
+# Ask the user for the required target coordinates the drone should hover at
 target_x,target_y,req_alt = map(float,input("Enter X,Y,Z coordinates of target : ").split())
 
 
@@ -94,14 +94,14 @@ def setPID_yaw(msg):
     ki_yaw =  msg.data[1]
     kd_yaw = msg.data[2]
 
-
+# Gets x PID published to node
 def setPID_x(msg):
     global kp_x,ki_x,kd_x
     kp_x = msg.data[0]
     ki_x = msg.data[1]
     kd_x = msg.data[2]
 
-    
+ # Gets y PID published to node   
 def setPID_y(msg):
     global kp_y,ki_y,kd_y
     kp_y = msg.data[0]
@@ -132,16 +132,14 @@ def calImu(msg):
     roll = roll * (180/3.14159265)
     pitch = pitch * (180/3.14159265)
     yaw = yaw * (180/3.14159265)
-    angVel_x = msg.angular_velocity.x
-    angVel_y = msg.angular_velocity.y
-    angVel_z = msg.angular_velocity.z
 
-
+#Gets current x,y posiiton of drone
 def calPosition(pos):
-    global x,y,z
+    global x,y
     x = round(pos.pose[1].position.x,3)
     y = round(pos.pose[1].position.y,3)
 
+# Gets vel_x and vel_y PID published to node
 def setPID_vel_x(msg):
     global kp_vel_x,ki_vel_x,kd_vel_x
     kp_vel_x = msg.data[0]
@@ -165,7 +163,7 @@ def alt_control(gps, vel, imu):
     calImu(imu)
     # Gets drones current altitude
     calAltitude(gps)
-
+    #Gets drones current x and y position
     rospy.Subscriber("/gazebo/model_states",ModelStates,calPosition )
 
     # Subsribe to all required topics to get PID for all controllers
@@ -178,7 +176,7 @@ def alt_control(gps, vel, imu):
     rospy.Subscriber("vel_x_pid", Float64MultiArray, setPID_vel_x) 
     rospy.Subscriber("vel_y_pid", Float64MultiArray, setPID_vel_y) 
 
-    # Combine the PID values into tuples so as to send easily to PID function
+    # Combine the PID values into tuples so as to easily send easily to PID function
     k_alt = (kp,ki,kd)
     k_roll = (kp_roll,ki_roll,kd_roll)
     k_pitch = (kp_pitch,ki_pitch,kd_pitch)
@@ -198,10 +196,10 @@ def alt_control(gps, vel, imu):
     print("X = ",x)
     print("Y = ",y)
     
-    #the goal is to get a function that stabilises the r p y of the drone while maintaining altitude
+    #the goal is to get a function that stabilises the r p y x and y of the drone as per the given target while maintaining altitude
     #speed returned is the final motor speed after going through the motor mixing algorithm for all controllers
     speed = PID_alt(roll, pitch, yaw,x,y, target, altitude, k_alt, k_roll, k_pitch, k_yaw, k_x, k_y, velocity, k_vel, flag)
-    flag += 1 
+    flag += 1 #Indicates completion of 1st run of function
 
     # Publish the final motor speeds to the propellers
     message_pub.publish(speed)
@@ -220,6 +218,8 @@ def control():
     imu_sub = message_filters.Subscriber("/edrone/imu/data", Imu)
     ts = message_filters.TimeSynchronizer([gps_sub, vel_sub, imu_sub], 2)
 
+    #one of these publishers is slower than the others
+    #which is why the messages are loading relatively slowly
     ts.registerCallback(alt_control)
     rospy.spin()
        
@@ -231,3 +231,5 @@ if __name__=='__main__':
     except rospy.ROSInterruptException:
         pass
         
+
+

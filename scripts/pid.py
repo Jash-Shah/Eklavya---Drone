@@ -10,7 +10,7 @@ from geometry_msgs.msg import Vector3
 from tf.transformations import euler_from_quaternion, quaternion_from_euler
 from std_msgs.msg import Float64, Float64MultiArray
 
-
+#Gets the target values and current values of rpy,x,y adn alt; and applies PID to all the errors and minimizes them
 def PID_alt(roll, pitch, yaw,x,y,target, altitude, k_alt, k_roll, k_pitch, k_yaw, k_x, k_y, velocity, k_vel, flag): 
     #global variables are declared to avoid their values resetting to 0
     global prev_alt_err,iMem_alt,dMem_alt,pMem_alt
@@ -18,9 +18,9 @@ def PID_alt(roll, pitch, yaw,x,y,target, altitude, k_alt, k_roll, k_pitch, k_yaw
     global kp_x,ki_x,kd_x,kp_y,ki_y,kd_y,target_x,target_y,req_alt
     global kp_thrust, ki_thrust, kd_thrust
 
-    #--------------------------------------------------------------------
+    #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-    #Assigning PID values here. From symmetry, control for roll and pitch is the same.
+    #Assigning PID values here.
     kp_thrust = k_alt[0]
     ki_thrust = k_alt[1]
     kd_thrust = k_alt[2]
@@ -44,17 +44,13 @@ def PID_alt(roll, pitch, yaw,x,y,target, altitude, k_alt, k_roll, k_pitch, k_yaw
     target_x = target[0]
     target_y = target[1]
     req_alt = target[2]
-    sample_time = 0.005
-
+    sample_time = 0.005 #sampling time
     current_time = time.time()
 
-    #WE NEED TO ACTIVELY CORRECT VELOCITY
+    #Controller for x,y,vel_x and vel_y tuning. Sets setpoint pitch and roll as output depending upon the corrections given by PID
     position_controller(target_x, target_y, x, y, velocity, k_vel, flag)
 
-    #100% sure
-    print("Setpoint pitch = ",setpoint_pitch)
-    print("Setpoint roll = ",setpoint_roll)
-
+    #Calculating errors
     err_pitch = pitch - setpoint_pitch
     err_roll = roll - setpoint_roll
     err_yaw = 0 - yaw
@@ -101,7 +97,7 @@ def PID_alt(roll, pitch, yaw,x,y,target, altitude, k_alt, k_roll, k_pitch, k_yaw
     dErr_roll = err_roll - prevErr_roll
     dErr_yaw = err_yaw - prevErr_yaw
     
-    #--------------------------------
+    #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     if (dTime >= sample_time):
         # Proportional terms
         pMem_alt = current_alt_err#this is for thrust
@@ -177,12 +173,13 @@ def PID_alt(roll, pitch, yaw,x,y,target, altitude, k_alt, k_roll, k_pitch, k_yaw
         thrust = 10    
     # print("Thrust = ",thrust)
 
-    speed = prop_speed()
     #uncomment for only altitutde PID testing
     # output_roll=0 
     # output_pitch=0
     # output_yaw=0
 
+    #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    speed = prop_speed()
 
     speed.prop1 = (thrust - output_yaw + output_pitch - output_roll) 
  
@@ -207,7 +204,9 @@ def PID_alt(roll, pitch, yaw,x,y,target, altitude, k_alt, k_roll, k_pitch, k_yaw
     return(speed)
 
 
+#Controller which applies PID to errors in x,y,vel_x and vel_y(target values of vel being 0) and gives setpoint pitch and roll as output to correct the errors
 def position_controller(target_x, target_y, x, y, velocity, k_vel, flag):
+    #global variables are declared to avoid their values resetting to 0
     global current_time,prevTime,dTime
     global prevErr_x,prevErr_y,pMem_x,pMem_y,iMem_x,iMem_y,dMem_x,dMem_y, prevErr_vel_x, prevErr_vel_y
     global pMem_vel_x, iMem_vel_x, dMem_vel_x
@@ -216,16 +215,12 @@ def position_controller(target_x, target_y, x, y, velocity, k_vel, flag):
     global kp_y,ki_y,kd_y
     global setpoint_pitch,setpoint_roll
 
-    # print("Kp x = ",kp_x)
-    # print("Kp y = ",kp_y)
+    #Unpacking all received values of velocity
     vel_x = velocity[0]
     vel_y = velocity[1]
-
-    
     kp_vel_x = k_vel[0]#0.0003
     ki_vel_x = k_vel[1]#0.000185
     kd_vel_x = k_vel[2]#0.00212
-
     kp_vel_y = k_vel[3]
     ki_vel_y = k_vel[4]
     kd_vel_y = k_vel[5]
@@ -236,15 +231,13 @@ def position_controller(target_x, target_y, x, y, velocity, k_vel, flag):
     err_vel_x = vel_x - 0
     err_vel_y = vel_y - 0
 
-    print("Vel X Error = ", err_vel_x)
-    print("X Error = ",err_x)
-    print("Y Error = ",err_y)
     x_err_pub = rospy.Publisher("/x_err", Float64, queue_size=10)
     x_err_pub.publish(err_x)
     y_err_pub = rospy.Publisher("/y_err", Float64, queue_size=10)
     y_err_pub.publish(err_y)
     vel_x_err_pub = rospy.Publisher("/vel_x_err", Float64, queue_size=10)
     vel_x_err_pub.publish(err_vel_x)
+    #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     if (flag==0):
         prevTime = 0
         prevErr_x = 0
@@ -270,7 +263,7 @@ def position_controller(target_x, target_y, x, y, velocity, k_vel, flag):
     dErr_vel_x = err_vel_x - prevErr_vel_x
     dErr_vel_y = err_vel_y - prevErr_vel_y
 
-    sample_time = 0.1
+    sample_time = 0.05
 
 
     if(dTime >= sample_time):
@@ -307,29 +300,21 @@ def position_controller(target_x, target_y, x, y, velocity, k_vel, flag):
 
     prevErr_x = err_x
     prevErr_y = err_y
+
+    #For Debugging Purposes
     #print("P Term X = ",pMem_x)
     #print("I Term X = ",iMem_x)
     #print("D Term X = ",dMem_x)
-
-    print("P Term Vel X = ",pMem_vel_x)
-    print("I Term Vel X = ",iMem_vel_x)
-    print("D Term Vel X = ",dMem_vel_x)
+    # print("P Term Vel X = ",pMem_vel_x)
+    # print("I Term Vel X = ",iMem_vel_x)
+    # print("D Term Vel X = ",dMem_vel_x)
 
     output_x = pMem_x + ki_x*iMem_x + kd_x*dMem_x
     output_y = pMem_y + ki_y*iMem_y + kd_y*dMem_y
     output_vel_x = pMem_vel_x + ki_vel_x*iMem_vel_x + kd_vel_x*dMem_vel_x
     output_vel_y = pMem_vel_y + ki_vel_y*iMem_vel_y + kd_vel_y*dMem_vel_y
 
-
-    #If error in x is greater than 1 then try to set velocity 0 first
-    #Then start correcting for other things
-    # lim_vel = 1
-    # limit = False
-    # if(vel_x > lim_vel): limit = True
-    # if (vel_x < -lim_vel): limit = True
-
-    # if(limit): output_x = 0
-
+    #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     print("Output Velocity X Term is = ", output_vel_x)
     print("Output Velocity Y Term is = ", output_vel_y)
     print("Kp Y = ", kp_y)
@@ -358,21 +343,29 @@ def position_controller(target_x, target_y, x, y, velocity, k_vel, flag):
     if(abs(err_x) < 4 and abs(vel_x) > 0.35):
         dampner = (1/vel_x) * 0.01
         print("Dampner: ", dampner)
-        setpoint_pitch = -(vel_x * 1.01 * 1.0 - dampner) #in the direction opposite to velocity
+        setpoint_pitch = -(vel_x * 1.01  - dampner) #in the direction opposite to velocity
         setpoint_pitch = 10 if (setpoint_pitch > 10) else setpoint_pitch 
         setpoint_pitch = -10 if (setpoint_pitch < -10) else setpoint_pitch 
-        print("Correction")
+
 
 
     #setpoint_pitch = err_x + dErr_x
 
-    if(abs(err_y) > 2 ):#and abs(vel_y) < 1.5):
+    if(abs(err_y) > 4 ):#and abs(vel_y) < 1.5):
         setpoint_roll = output_y
     else:
         setpoint_roll = 0
         #setpoint_roll = output_vel_y
     
-    if(abs(err_y) < 4 and abs(vel_y) > 0.3):
-        setpoint_roll = (vel_y * 2.35 * 1.0) #in the direction opposite to velocity
-        print("Correction")
+    if(abs(err_y) < 4 and abs(vel_y) > 0.35):
+        dampner_y = (1/vel_y) * 0.01
+        # setpoint_roll = (vel_y * 2.35  - dampner_y) #in the direction opposite to velocity
+        setpoint_roll = (vel_y * 2.0  - dampner_y) #in the direction opposite to velocity
+        setpoint_roll = 10 if (setpoint_roll>10) else setpoint_roll
+        setpoint_roll = -10 if (setpoint_roll <-10) else setpoint_roll
+
+
+
+    
+
 
