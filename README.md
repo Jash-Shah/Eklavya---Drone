@@ -114,9 +114,13 @@ Drone at start of the program:
 
 <img src="assets/drone_start.png">
 
-Drone when an altitude is given in control.py:  
+Drone when target co-ordinates are given in control.py:  
 
-https://user-images.githubusercontent.com/31101072/138051009-1865b520-fffc-4537-b7e5-d3fc35edf76c.mp4
+
+
+
+https://user-images.githubusercontent.com/82902712/138563488-c9e4268a-3700-4b34-b2bd-1795de4a06f7.mp4
+
 
 
 
