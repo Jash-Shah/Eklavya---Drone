@@ -113,9 +113,11 @@ Or a gif of you typing said commands*
 *Add the videos, gifs and other things here*
 
 Drone at start of the program:  
+
 <img src="assets/drone_start.png">
 
 Drone when an altitude is given in control.py:  
+
 <img src="assets/drone_hover.gif">
 
 <!-- FUTURE WORK -->
