@@ -14,6 +14,7 @@ Building a drone and developing its control system
     - [Prerequisites and installlation](#prerequisites-and-installlation)
     - [Installation](#installation)
     - [Execution](#execution)
+  - [Algorithm Flowchart](#algorithm-flowchart)
   - [Results and Demo](#results-and-demo)
   - [Future Work](#future-work)
   - [Contributors](#contributors)
@@ -105,6 +106,11 @@ rosrun vitarana_drone control.py
 
 <img src="assets/terminal_start.gif" width="640" height="480" />
 
+
+<!--Flowchart -->
+## Algorithm Flowchart
+Simplified code structure  
+<img src="assets/PID Diagram.png">
 
 <!-- RESULTS AND DEMO -->
 ## Results and Demo
