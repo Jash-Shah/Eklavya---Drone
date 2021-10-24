@@ -24,7 +24,7 @@ Building a drone and developing its control system.
 <!--ABOUT THE PROJECT -->
 ## About The Project
 Drone aviation is an emerging industry. With possibilities for its applications in agriculture, healthcare, e-commerce as well as traffic control. We wanted to get first hand experience with how a drone is designed as well as how it flies to get a firm grasp on the principles needed to work with drones in the future.
-Our full project report can be found [here](report/Eklavya Report.pdf)
+Our full project report can be found [here](https://github.com/Jash-Shah/Eklavya---Drone/blob/main/report/Eklavya%20Report.pdf)
 
 
 ### Tech Stack
