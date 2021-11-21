@@ -7,6 +7,7 @@ Strange title isn't it? It manages to sum up our experience with this project qu
 Quite an intimidating task for the both of us, given that we were complete beginners in almost all areas of robotics. Thankfully we had the guidance of some great mentors and an amazing community thanks to our college club: [SRA](https://sravjti.in/).
 
 > Q: So how does one go about building a drone?
+
 > A: You design it first
 
 ## **Trial 1** : Solidworks and URDFs
@@ -126,6 +127,7 @@ code for the r, p, y
 These values always need to be in a small acceptable range, otherwise the drone will not be able to fly properly. ("flying" being sort of an imp part <Maybe joke here?>)
 
 > Q: Okay, but how does all this info really help us getting the drone to do what we want? Since at the end of the day, all we can really control are motor speeds.
+
 > A: This is where the **motor mixing algorithm** comes in
 
 #### Meet Thy Motors (The Four Commandments of Motors maybe?)
@@ -158,7 +160,7 @@ The code is relatively simple
 Pid code for one thing, thrust maybe?
 ```
 
-Now you may have noticed the p_term, i_term and d_terms. What are they? They're values that are multiplied to the error. Doing so, they adjust the output and keep it _juust_ right so that the system (drone) remains stable.
+Now you may have noticed the p*term, i_term and d_terms. What are they? They're values that are multiplied to the error. Doing so, they adjust the output and keep it \_juust* right so that the system (drone) remains stable.
 
 The horror? These values are **random**.
 Let me say that again, THESE VALUES ARE **RANDOM** !!!
@@ -166,6 +168,7 @@ Let me say that again, THESE VALUES ARE **RANDOM** !!!
 Since each system is different, so are these values. While there are a few broad guidelines to tuning PIDs, they are, _by and large_ left in the hands of the users themselves.
 
 > Q: How does one determine the _variables_ that determine the **fate** of your system?
+
 > A: Trial and error :slightly_smiling_face:
 
 Cue getting the drone to move autonomously
