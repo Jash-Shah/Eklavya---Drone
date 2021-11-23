@@ -1,4 +1,4 @@
-# Pain and PIDs: Our Journey in Drone Design
+# Persistence and PIDs: Our Journey in Drone Design
 
 ## Introduction
 
@@ -7,10 +7,9 @@ Strange title isn't it? It manages to sum up our experience with this project qu
 Quite an intimidating task for the both of us, given that we were complete beginners in almost all areas of robotics. Thankfully we had the guidance of some great mentors and an amazing community thanks to our college club: [SRA](https://sravjti.in/).
 
 > Q: So how does one go about building a drone?
+> A: You design it first :pencil:
 
-> A: You design it first
-
-## **Trial 1** : Solidworks and URDFs
+## Search, Design, Develop
 
 We started out at the same place everyone does when they need to do something but don't know how to: **YouTube**
 
@@ -21,16 +20,16 @@ Incidentally we went for the **fourth video** in this list, mainly because it lo
 Then came the fun but arduous task of actually making the Drone in SolidWorks. It involved three steps:
 
 1. Making each indicidual part and saving it as a SolidWorks part file(.sldprt).
-2. Adding all the parts in an Assembly file and liniking them together using different joints(but mostly prismatic) to create the Drone assembly file.
-3. Then came the most crucial part, making the drone look sleek & sexy(actually not that important).
+2. Adding all the parts in an Assembly file and liniking them together using different joints (but mostly prismatic) to create the Drone assembly file.
+3. Then came the most crucial part, making the drone look sleek & sexy (actually not that important).
 
-> Tip : Pick a nice 2 hr long album, couple of cups of Mocha and designing in SolidWorks turns into a meditative act.
+> Tip : Pick a nice 2 hr long album, couple of cups of Mocha and designing in SolidWorks turns into a meditative act. :coffee:
 
 After a lot of hours in Solidworks, our finished model was ready.
 
 Now, to actually be able to simulate this model and controlled by ROS we needed to convert our SolidWorks assembly into a URDF (Universal Robot Description Format). Fortunately, some kind hearted soul had thought of adding an extension in SolidWorks where by we could natively export our assembly into an URDF (God Bless the resourcefullness of programmers!).
 
-## **Trial 2** : Understanding ROS & Gazebo
+## Softwares and Simulators
 
 This step involves us trying to build our Drone a playground to experiment in. It uses two softwares which are going to be critical going forward :
 
@@ -62,7 +61,7 @@ Gazebo is ROSs' native simulation software which enitrely is a Node in itself! (
 
 However this "lo and behold!" moment turned sour pretty quick when we saw that none of the textures in our mesh files got registered. After banging our heads for sometime we finally found a solution which involved using Blender(of all things) to "re-texturize" our model and then export the meshes as .stl files.
 
-## Trial 3 : World Building
+## A World of our Drone (Can it be Bit better??)
 
 World building is a fancy way of saying making our drone do and respond to the numerous pyhsical phenomena in the simulated world as it would in the real world(Yes, that still exists). This means giving it propulsion so that upon the wings spinning enough thrust would be generated to make the drone rise in the sky like a pheonix!(can you tell how obssessed we were with our model). Also attaching various sensors like 1. GPS - For getting position and velocity. 2. IMU - For getting orientation. 3. Camera - For visualizing its surroundings.
 
@@ -82,7 +81,7 @@ And Finally! after about two weeks(which felt like a month)of debugging we had a
 And thus with our model and world set up we were ready to move onto building the control system.
     
     
-## Trial 4: Control System
+## Take Control of your System
 No matter how complex the control theory is, at the end of the day what we can control about the drone are simply the motor speeds i.e. how fast the fans at the end spin.
 But to accomplish more complicated tasks with the drone (moving, stablilising etc.) we must make some layers that control these motors according to human inputs.
 This is the flow of the drone control system. We'll go into the individual components going ahead but as an overview:
@@ -127,7 +126,6 @@ code for the r, p, y
 These values always need to be in a small acceptable range, otherwise the drone will not be able to fly properly. ("flying" being sort of an imp part <Maybe joke here?>)
 
 > Q: Okay, but how does all this info really help us getting the drone to do what we want? Since at the end of the day, all we can really control are motor speeds.
-
 > A: This is where the **motor mixing algorithm** comes in
 
 #### Meet Thy Motors (The Four Commandments of Motors maybe?)
@@ -144,7 +142,7 @@ _Et voilà!_ our drone could fly and move according to our commands!
 
 Well.... not exactly. There's one component that comes in between that I've avoided talking about so far: **PIDs**.
 
-## Trial 5: Pain with PIDs
+## Persistence and PIDs
 
 PID stands for Proportional, Integral, Derivative. If the name sounds scary don't be afraid, PIDs are relatively simple to implement and get running.
 
@@ -160,7 +158,7 @@ The code is relatively simple
 Pid code for one thing, thrust maybe?
 ```
 
-Now you may have noticed the p*term, i_term and d_terms. What are they? They're values that are multiplied to the error. Doing so, they adjust the output and keep it \_juust* right so that the system (drone) remains stable.
+Now you may have noticed the p_term, i_term and d_terms. What are they? They're values that are multiplied to the error. Doing so, they adjust the output and keep it _juust_ right so that the system (drone) remains stable.
 
 The horror? These values are **random**.
 Let me say that again, THESE VALUES ARE **RANDOM** !!!
@@ -168,7 +166,6 @@ Let me say that again, THESE VALUES ARE **RANDOM** !!!
 Since each system is different, so are these values. While there are a few broad guidelines to tuning PIDs, they are, _by and large_ left in the hands of the users themselves.
 
 > Q: How does one determine the _variables_ that determine the **fate** of your system?
-
 > A: Trial and error :slightly_smiling_face:
 
 Cue getting the drone to move autonomously
@@ -176,3 +173,36 @@ Cue countless hours of frustration
 (Find an interesting way to edit the above lines?)
 
 ## Flying is Hard
+
+After a couple of days of PID tuning, our drone could take off and hover stably above the ground.
+(Image/gif here)
+
+But now came the next part of our project, _autonomous movement_. Autonomous movement is difficult for a couple of reasons:
+
+1. The drone needs to orient itself to move towards the desired point
+2. When it reaches the desired point, the drone needs to orient itself such that it stops there
+
+It was no. 2 which gave us the most grief. As the drone flew to a co-ordinate, it was unable to stop itself there. It then overshot the point and backtracked but the backtracking also couldn't stop itself properly. Leading into a self-sustaining cycle of osciallations that only grew stronger with time.
+(Graph of oscialltions increasing with time)
+
+Despite frenzied searches on forums, meetings with mentors and conversations with each other we found only one solution to our problems. **Tune the PIDs**
+
+> Q: How long can a person edit random values whose output seems only to worsen with increasing effort?
+
+> A: 30 mins for _frustration_ -> 1 hr for _despair_ -> 2 hrs to contemplate _giving up_ -> 30 mins in between to restore the spirit :+1:
+
+This was our daily schedule for nearly 7-8 agonizing days. Given that we had only 1 month to complete the project and we had already lost a lot of time with the issues of our model, our efforts were only getting more and more frenzied as the deadline approached.
+
+And still we kept on going, and going, and going......
+
+```
+Final code of the x,y dirs
+```
+
+One day before the deadline, with the help of the code written above and PID values that seemed to align. **We got it working**
+
+(Gif of final thing)
+
+If there's anything to take away from this blog post, it's that no matter what you want to do, you have the capacity to do it. Even if you have no idea how to, you can learn to.
+
+After all, if persistence and pain can conquer PIDs, it can conquer anything! (Not a very good conclusion, maybe revise?)
