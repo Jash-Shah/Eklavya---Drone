@@ -1,12 +1,11 @@
 # Persistence and PIDs: Our Journey in Drone Design
 
-## Introduction
-
 Strange title isn't it? It manages to sum up our experience with this project quite well though. For the Eklavya Mentorship program, my teammate and I undertook the task of building a drone from scratch and designing it's control system.
 
 Quite an intimidating task for the both of us, given that we were complete beginners in almost all areas of robotics. Thankfully we had the guidance of some great mentors and an amazing community thanks to our college club: [SRA](https://sravjti.in/).
 
 > Q: So how does one go about building a drone?
+
 > A: You design it first :pencil:
 
 ## Search, Design, Develop
@@ -19,21 +18,21 @@ Incidentally we went for the **fourth video** in this list, mainly because it lo
 
 Then came the fun but arduous task of actually making the Drone in SolidWorks. It involved three steps:
 
-1. Making each indicidual part and saving it as a SolidWorks part file(.sldprt).
-2. Adding all the parts in an Assembly file and liniking them together using different joints (but mostly prismatic) to create the Drone assembly file.
+1. Making each individual part and saving it as a SolidWorks part file (.sldprt).
+2. Adding all the parts in an Assembly file and liniking them together using different joints (but mostly prismatic) to create the drone assembly file.
 3. Then came the most crucial part, making the drone look sleek & sexy (actually not that important).
 
 > Tip : Pick a nice 2 hr long album, couple of cups of Mocha and designing in SolidWorks turns into a meditative act. :coffee:
 
-After a lot of hours in Solidworks, our finished model was ready.
+After quite a few hours in Solidworks, our finished model was ready.
 
 ![Original Drone 1](assets/Og_Drone1.jpg)
 
-![Original Drone 2](assets/Og_Drone1.jpg)
+![Original Drone 2](assets/Og_Drone2.jpg)
 
 
 
-Now, to actually be able to simulate this model and controlled by ROS we needed to convert our SolidWorks assembly into a URDF (Universal Robot Description Format). Fortunately, some kind hearted soul had thought of adding an extension in SolidWorks where by we could natively export our assembly into an URDF (God Bless the resourcefullness of programmers!).
+Now, to actually be able to simulate this model and control it via ROS we needed to convert our SolidWorks assembly into a URDF ([Universal Robot Description Format](https://wiki.ros.org/urdf)). Fortunately, some kind-hearted soul had thought of adding an extension in SolidWorks where-by we could natively export our assembly into an URDF (God Bless the resourcefulness of programmers!).
 
 ## Softwares and Simulators
 
@@ -41,11 +40,11 @@ This step involves us trying to build our Drone a playground to experiment in. I
 
 ### 1. ROS (Robot Operating System)
 
-ROS is an open-source, meta-operating system for your robot. Basically ROS enables us to control our Drone(and its specific parts) using Python/C++ code. ROS communication implements data transmission between **Nodes** using **Topics**.
+[ROS](https://ros.org/) is an open-source, meta-operating system for your robot. Basically ROS enables us to control our Drone (and its specific parts) using Python/C++ code. ROS communication implements data transmission between **Nodes** using **Topics**.
 
 #### ROS Node
 
-All processes in ROS run in a Node. For eg: In our Drone each Wing Link(the joint between the wing and the base),the camera, IMU sensors are all nodes. The Python script we write itself creates many nodes.
+All processes in ROS run in a Node. For eg: In our Drone each Wing Link (the joint between the wing and the base), the camera, IMU sensors are all nodes. The python script we write itself creates many nodes.
 
 #### ROS Topics
 
@@ -53,49 +52,43 @@ Topics are the _named_ channels over which the nodes exchange messages. Topics c
 **subscribed to** - For sending data through the topic.
 **published to** - For recieving data from the topic.
 
-So, suppose we want to change the speed of wing link 1 of our Drone from 10 to 100 using a Python script then in ROS terms that would look as follows:
+So, suppose we want to change the speed of wing link 1 of our Drone from 10 to 100 using a python script. Then to implement it in ROS, it would look as follows:
 
 ![Python Script creates Node---(pubs to pwm topic)----------------------------------(subs to pwm topic)----> Wing Link Node](assets/Node-Diag.jpg)
 
-<!-- Insert img here -->
 
 ### 2. Gazebo
 
-Gazebo is ROSs' native simulation software which enitrely is a Node in itself! (props to ROS devs for sticking to their guns with their comms sytem). It can open our URDF file in a simulated world.
-
+Gazebo is ROS' native simulation software which entirely is a Node in itself! (props to ROS devs for sticking to their guns with their comms sytem). It can open our URDF file in a simulated world.
 
 ![First model in gazebo](assets/Og_Drone_gazebo1.jpeg)
 
-However this "lo and behold!" moment turned sour pretty quick when we saw that none of the textures in our mesh files got registered. After banging our heads for sometime we finally found a solution which involved using Blender(of all things) to "re-texturize" our model and then export the meshes as .stl files.
+However this "lo and behold!" moment turned sour pretty quick when we saw that none of the textures in our mesh files got registered. After banging our heads for sometime we finally found a solution which involved using Blender (of all things) to "re-texturize" our model and then export the meshes as .stl files.
 
-## A World to Fly (Can it be Bit better??)
+## A World to Fly In
 
-World building is a fancy way of saying making our drone do and respond to the numerous pyhsical phenomena in the simulated world as it would in the real world(Yes, that still exists). This means giving it propulsion so that upon the wings spinning enough thrust would be generated to make the drone rise in the sky like a pheonix!(can you tell how obssessed we were with our model). Also attaching various sensors like:
+World building is a fancy way of making our drone respond to the numerous physical phenomena in the simulated world as it would in the real world (yes, that still exists). This means giving it propulsion so that upon the wings spinning, enough thrust would be generated to make the drone rise in the sky like a pheonix! Also attaching various sensors like:
 
 1. GPS - For getting position and velocity.
 2. IMU - For getting orientation.
 3. Camera - For visualizing its surroundings.
 
-We had planned to just use some pre-built propulsion and sensor plugins and add them to our URDF and move on to the next part but _Ohhh no no_; The ROS Gods had some other plans in mind. The plugins seemed damn near incompatible with our model! Anytime we would try to run the simulation the drone would just twitch and sway like it was dry humping the ground.
-<!-- (like it had an epilepsy fit.<replacement joke incase the first ones too offensive>). (I think this is too offensive :joy:) -->
+We had planned to just use some pre-built propulsion and sensor plugins and add them to our URDF and move on to the next part but _Ohhh no no_; The ROS Gods had some other plans in mind. The plugins seemed damn near incompatible with our model! Anytime we would try to run the simulation the drone would just twitch and sway like it was _overly attached_ to the ground.
 
 ![First Model in Gazebo](assets/Og_Drone_gazebo2.gif)
 
-Turns out the problem was with the wing joints not being registered as revolute. However, even though we got a somewhat what more stable system after fixing that, the drone would still not lift. There were many painful days spent scouring all sorts of forums drearily tring to sniff out even a whiff of a solution.
-Finally we did what most programmers do when they can't find a solution to a problem....we just took someone else's model and abandoned ours. And trying to stick to our _high standards_ this someone else was none other than IIT Bombay(specifically the model they provided for their E-Yantra 2020 competition).
+Turns out the problem was with the wing joints not being registered as revolute. However, even though we got a **_somewhat_** what more stable system after fixing that, the drone would still not lift. There were many painful days spent scouring all sorts of forums, drearily tring to sniff out even a **_whiff_** of a solution.
+Finally we did what most programmers do when they can't find a solution to a problem....we just took someone else's model and abandoned ours. And trying to stick to our _high standards_ this someone else was none other than IIT Bombay (specifically the model they provided for their [E-Yantra 2020](https://new.e-yantra.org/eyrc) competition).
 
-And Finally! after about two weeks(which felt like a month)of debugging we had a flying drone!
+And Finally! after about two weeks (which felt like a month) of debugging we had a flying drone!
 
 ![ERYC Model](assets/drone_start.png)
-
-<Insert vid of glorious E-Yantra drone flying>
     
-And thus with our model and world set up we were ready to move onto building the control system.
-    
+And thus with our model and world set up, we were ready to move onto building the control system.
     
 ## Take Control of your System
 No matter how complex the control theory is, at the end of the day what we can control about the drone are simply the motor speeds i.e. how fast the fans at the end spin.
-But to accomplish more complicated tasks with the drone (moving, stablilising etc.) we must make some layers that control these motors according to human inputs.
+But to accomplish more complicated tasks with the drone (moving, stablilising etc.) we must make some _layers_ that control these motors according to human inputs.
 This is the flow of the drone control system. We'll go into the individual components going ahead but as an overview:
     ![PID Diagram](assets/PID%20Diagram.png)
     
@@ -109,7 +102,7 @@ To accomplish this we needed to know a few things:
 
 To get its position we had two options, since the drone was in a simulation, we could just ask gazebo to tell us where the model was. Otherwise, we could have the onboard GPS give us the latitude and longitude positions of the drone.
 
-Both of these approaches were nearly identical. We went with getting the X-Y co-ordinates from Gazebo since it was much more intuitive to give it input co-ords than arbitrary lat - long values.
+Both of these approaches were nearly identical. We went with getting the X-Y co-ordinates from Gazebo since it was much more intuitive to give it input co-ords than arbitrary latitude - longitude values.
 
 ```python
 #Subscriber to Model State
@@ -141,7 +134,7 @@ def calVelocity(msg):
 
 #### Don't Flip Out Drone!
 
-The IMU ([Inertial Measurement Unit](https://en.wikipedia.org/wiki/Inertial_measurement_unit)) also gets us the orientation of the drone or its Roll, Pitch and Yaw. Fancy terms to describe tilted it is with X, Y and Z axes
+The IMU ([Inertial Measurement Unit](https://en.wikipedia.org/wiki/Inertial_measurement_unit)) also gets us the orientation of the drone or its Roll, Pitch and Yaw. Fancy terms to describe how tilted it is with X, Y and Z axes
 
 ![Roll, Pitch, Yaw image](assets/Roll-Pitch-Yaw.jpg)
 
@@ -159,12 +152,13 @@ def calImu(msg):
     yaw = yaw * (180/3.14159265)
 ```
 
-These values always need to be in a small acceptable range, otherwise the drone will not be able to fly properly. ("flying" being sort of an imp part <Maybe joke here?>)
+These values always need to be in a small acceptable range, otherwise the drone will not be able to fly properly. (_flying_ being sort of an important feature of a drone :joy:)
 
 > Q: Okay, but how does all this info really help us getting the drone to do what we want? Since at the end of the day, all we can really control are motor speeds.
+
 > A: This is where the **motor mixing algorithm** comes in
 
-#### Meet Thy Motors (The Four Commandments of Motors maybe?)
+#### Meet Thy Motors
 
 Using advanced mathematical methods of analysis, some _very smart_ people have come up with a way to control roll, pitch and yaw through just the motor speeds.
 
@@ -200,6 +194,8 @@ In this case, PIDs operate between Roll, Pitch, Yaw, Thrust values and the Motor
 The code is relatively simple
 
 ```python
+# Code for the Altitude PID
+
 #Speed found from testing at which drone hovers at a fixed height
 hover_speed = 508.75
 dErr_alt = current_alt_err - prev_alt_err
@@ -218,7 +214,7 @@ output_alt = kp_thrust*pMem_alt + ki_thrust*iMem_alt + kd_thrust*dMem_alt
 thrust = hover_speed + output_alt*2.5
 ```
 
-Now you may have noticed the p*term, i_term and d_terms. What are they? They're values that are multiplied to the error. Doing so, they adjust the output and keep it \_juust* right so that the system (drone) remains stable.
+Now you may have noticed the p_term, i_term and d_terms. What are they? They're values that are multiplied to the error. Doing so, they adjust the output and keep it _juust_ right so that the system (drone) remains stable.
 
 The horror? These values are **random**.
 Let me say that again, THESE VALUES ARE **RANDOM** !!!
@@ -226,12 +222,12 @@ Let me say that again, THESE VALUES ARE **RANDOM** !!!
 Since each system is different, so are these values. While there are a few broad guidelines to tuning PIDs, they are, _by and large_ left in the hands of the users themselves.
 
 > Q: How does one determine the _variables_ that determine the **fate** of your system?
+
 > A: Trial and error :slightly_smiling_face:
 
-Cue getting the drone to move autonomously
-Cue countless hours of frustration
-(Cue the poor drone being used and abused for a week straight by 3 knobs(3 numbers maybe?))
-(Find an interesting way to edit the above lines?)
+Cue trying to get the drone to move autonomously 🤖
+Cue countless hours of frustration 😠
+Cue the poor drone being used and abused for a week straight by 3 sliding knobs 🎛️
 
 ## Flying is Hard
 
