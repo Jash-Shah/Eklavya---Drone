@@ -222,6 +222,7 @@ Since each system is different, so are these values. While there are a few broad
 
 Cue getting the drone to move autonomously
 Cue countless hours of frustration
+(Cue the poor drone being used and abused for a week straight by 3 knobs(3 numbers maybe?))
 (Find an interesting way to edit the above lines?)
 
 ## Flying is Hard
@@ -299,6 +300,25 @@ One day before the deadline, with the help of the code written above and PID val
 
 (Gif of final thing)
 
-If there's anything to take away from this blog post, it's that no matter what you want to do, you have the capacity to do it. Even if you have no idea how to, you can learn to.
+## Conclusion
+    
+Being First Year Computer Scinece students this was the first "real" big team project we had worked on. Here are a few things we learnt (sometimes painfully so) about not only developing but working on any project in general:
+    <ul>
+       <li>Learning becomes much more fun if you get to apply it alongside!</li>
+        <li>Having well-thought and curated resources can go a loooong way.</li>
+        <li>There SHOULD be a course for effective Googling taught in all schools.</li>
+        <li>The best Mentors are the ones who can guide and nudge you in the right directions while letting you figuring out the solutions on your own.</li>
+        <li>Having a teammate who you can understand and communicate with easily makes any project 50% easier and a 100% more fun :)</li>
+        <li>The final vision of a project is much much different at the beginning than the end.</li>
+        <li>Having to scale back your orignal goals to meet deadlines isn't as much accepting defeat as it is an exercise in prioratization.</li>     
+    </ul>
+    
+So, to any of our fellow programmers or just anyone who cared to read till this point if there's anything to take away from this blog post, it's that **no matter what you want to do, you have the capacity to do it. Even if you have no idea how to, you can learn to.**
+    
+(its that anything is possible and fun with the right company,guidance and the will to push a bit more than last time)
+    
+After all, if persistence and pain can conquer PIDs, it can conquer anything (Not a very good conclusion, maybe revise?)
+    
+(After all, if two First Year stidents can simulate a flying vehicle without burning their PCs or their brains then atleast you can do the latter)    
 
-After all, if persistence and pain can conquer PIDs, it can conquer anything! (Not a very good conclusion, maybe revise?)
+(After all, if the two of us can prioratize all our time in tuning three knobs for a week straight then you have no excuse.)<Can be phrased better>
