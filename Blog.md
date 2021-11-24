@@ -27,6 +27,12 @@ Then came the fun but arduous task of actually making the Drone in SolidWorks. I
 
 After a lot of hours in Solidworks, our finished model was ready.
 
+![Original Drone 1](assets/Og_Drone1.jpg)
+
+![Original Drone 2](assets/Og_Drone1.jpg)
+
+
+
 Now, to actually be able to simulate this model and controlled by ROS we needed to convert our SolidWorks assembly into a URDF (Universal Robot Description Format). Fortunately, some kind hearted soul had thought of adding an extension in SolidWorks where by we could natively export our assembly into an URDF (God Bless the resourcefullness of programmers!).
 
 ## Softwares and Simulators
@@ -49,19 +55,20 @@ Topics are the _named_ channels over which the nodes exchange messages. Topics c
 
 So, suppose we want to change the speed of wing link 1 of our Drone from 10 to 100 using a Python script then in ROS terms that would look as follows:
 
-(placeholder)
-Python Script creates Node---(pubs to pwm topic)----------------------------------(subs to pwm topic)----> Wing Link Node
+![Python Script creates Node---(pubs to pwm topic)----------------------------------(subs to pwm topic)----> Wing Link Node](assets/Node-Diag.jpg)
 
 <!-- Insert img here -->
 
 ### 2. Gazebo
 
 Gazebo is ROSs' native simulation software which enitrely is a Node in itself! (props to ROS devs for sticking to their guns with their comms sytem). It can open our URDF file in a simulated world.
-<Insert img of first model in gazebo>
+
+
+![First model in gazebo](assets/Og_Drone_gazebo1.jpeg)
 
 However this "lo and behold!" moment turned sour pretty quick when we saw that none of the textures in our mesh files got registered. After banging our heads for sometime we finally found a solution which involved using Blender(of all things) to "re-texturize" our model and then export the meshes as .stl files.
 
-## A World of our Drone (Can it be Bit better??)
+## A World to Fly (Can it be Bit better??)
 
 World building is a fancy way of saying making our drone do and respond to the numerous pyhsical phenomena in the simulated world as it would in the real world(Yes, that still exists). This means giving it propulsion so that upon the wings spinning enough thrust would be generated to make the drone rise in the sky like a pheonix!(can you tell how obssessed we were with our model). Also attaching various sensors like:
 
@@ -69,9 +76,10 @@ World building is a fancy way of saying making our drone do and respond to the n
 2. IMU - For getting orientation.
 3. Camera - For visualizing its surroundings.
 
-We had planned to just use some pre-built propulsion and sensor plugins and add them to our URDF and move on to the next part but _Ohhh no no_; The ROS Gods had some other plans in mind. The plugins seemed damn near incompatible with our model. Anytime we would try to run the simulation the drone would just twitch and sway like a dog dry humping the ground(like it had an epilepsy fit.<replacement joke incase the first ones too offensive>). (I think this is too offensive :joy:)
+We had planned to just use some pre-built propulsion and sensor plugins and add them to our URDF and move on to the next part but _Ohhh no no_; The ROS Gods had some other plans in mind. The plugins seemed damn near incompatible with our model! Anytime we would try to run the simulation the drone would just twitch and sway like it was dry humping the ground.
+<!-- (like it had an epilepsy fit.<replacement joke incase the first ones too offensive>). (I think this is too offensive :joy:) -->
 
-<Insert video of guy having epilepsy fit alongside our drone vid :)>
+![First Model in Gazebo](assets/Og_Drone_gazebo2.gif)
 
 Turns out the problem was with the wing joints not being registered as revolute. However, even though we got a somewhat what more stable system after fixing that, the drone would still not lift. There were many painful days spent scouring all sorts of forums drearily tring to sniff out even a whiff of a solution.
 Finally we did what most programmers do when they can't find a solution to a problem....we just took someone else's model and abandoned ours. And trying to stick to our _high standards_ this someone else was none other than IIT Bombay(specifically the model they provided for their E-Yantra 2020 competition).
@@ -135,7 +143,7 @@ def calVelocity(msg):
 
 The IMU ([Inertial Measurement Unit](https://en.wikipedia.org/wiki/Inertial_measurement_unit)) also gets us the orientation of the drone or its Roll, Pitch and Yaw. Fancy terms to describe tilted it is with X, Y and Z axes
 
-(Roll Pitch Yaw images) preferably in a line
+![Roll, Pitch, Yaw image](assets/Roll-Pitch-Yaw.jpg)
 
 ```python
 #Similar to the velocity subscriber
@@ -187,7 +195,7 @@ All it is, is a way for the system (drone) to be able to bring itself towards a 
 In this case, PIDs operate between Roll, Pitch, Yaw, Thrust values and the Motor Mixing Algorithm. They consider the taget values, look at the current values and then decide if the motor speeds should be higher or lower to get to the target values and how high and how low these values should be.
 
 (PID diagram with the fancy E symbol)
-![PID Theory Diagram]()
+![PID Theory Diagram](assets/pid-formuals.png)
 
 The code is relatively simple
 
@@ -236,7 +244,8 @@ But now came the next part of our project, _autonomous movement_. Autonomous mov
 2. When it reaches the desired point, the drone needs to orient itself such that it stops there
 
 It was no. 2 which gave us the most grief. As the drone flew to a co-ordinate, it was unable to stop itself there. It then overshot the point and backtracked but the backtracking also couldn't stop itself properly. Leading into a self-sustaining cycle of osciallations that only grew stronger with time.
-(Graph of oscialltions increasing with time)
+
+![Graph of oscialltions increasing with time](assets/oscillations.png)
 
 Despite frenzied searches on forums, meetings with mentors and conversations with each other we found only one solution to our problems. **Tune the PIDs**
 
@@ -296,9 +305,10 @@ if(abs(err_y) < 4 and abs(vel_y) > 0.35):
 
 ```
 
-One day before the deadline, with the help of the code written above and PID values that seemed to align. **We got it working**
+**One day before the deadline**, with the help of the code written above and PID values that seemed to align. **We got it working**
 
-(Gif of final thing)
+![Final Output](assets/Final_output.gif)
+
 
 ## Conclusion
     
@@ -319,6 +329,6 @@ So, to any of our fellow programmers or just anyone who cared to read till this 
     
 After all, if persistence and pain can conquer PIDs, it can conquer anything (Not a very good conclusion, maybe revise?)
     
-(After all, if two First Year stidents can simulate a flying vehicle without burning their PCs or their brains then atleast you can do the latter)    
+(After all, if two First Year students can simulate a flying vehicle without burning their PCs or their brains then atleast you can do the latter)    
 
 (After all, if the two of us can prioratize all our time in tuning three knobs for a week straight then you have no excuse.)<Can be phrased better>
