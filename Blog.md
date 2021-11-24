@@ -99,28 +99,52 @@ To get its position we had two options, since the drone was in a simulation, we 
 
 Both of these approaches were nearly identical. We went with getting the X-Y co-ordinates from Gazebo since it was much more intuitive to give it input co-ords than arbitrary lat - long values.
 
-```
-Insert code for get model state here
+```python
+#Subscriber to Model State
+rospy.Subscriber("/gazebo/model_states",ModelStates,calPosition)
+#Callback function
+def calPosition(pos):
+    global x,y
+    x = round(pos.pose[1].position.x,3)
+    y = round(pos.pose[1].position.y,3)
 ```
 
 #### Slow Down Drone!
 
 Another important aspect was its speed, if the drone went too fast it risked destabilising itself and flipping over. Hence we had to maintain a careful control over its speed.
 
-We obtained the velocity values via an IMU ([Inertial Measurement Unit](https://en.wikipedia.org/wiki/Inertial_measurement_unit)) onboard the drone.
+We obtained the velocity values via the GPS onboard the drone.
 
-```
-read_sensor_data code here
+```python
+#Subscriber to gps
+vel_sub = message_filters.Subscriber("/edrone/gps_velocity", Vector3Stamped)
+#callback function isn't immediately defined as we need to pack velocity, xyz and rpy values together after getting them from the drone
+
+def calVelocity(msg):
+    global vel_x, vel_y, vel_z
+    vel_x = msg.vector.x
+    vel_y = msg.vector.y
+    vel_z = msg.vector.z
 ```
 
 #### Don't Flip Out Drone!
 
-The IMU also gets us the orientation of the drone or its Roll, Pitch and Yaw. Fancy terms to describe tilted it is with X, Y and Z axes
+The IMU ([Inertial Measurement Unit](https://en.wikipedia.org/wiki/Inertial_measurement_unit)) also gets us the orientation of the drone or its Roll, Pitch and Yaw. Fancy terms to describe tilted it is with X, Y and Z axes
 
 (Roll Pitch Yaw images) preferably in a line
 
-```
-code for the r, p, y
+```python
+#Similar to the velocity subscriber
+imu_sub = message_filters.Subscriber("/edrone/imu/data", Imu)
+
+def calImu(msg):
+    #variables recieved from the IMU are unpacked
+    orinetation_list = [msg.orientation.x,msg.orientation.y,msg.orientation.z,msg.orientation.w]
+    global roll, pitch, yaw
+    (roll,pitch,yaw) = euler_from_quaternion(orinetation_list)
+    roll = roll * (180/3.14159265)
+    pitch = pitch * (180/3.14159265)
+    yaw = yaw * (180/3.14159265)
 ```
 
 These values always need to be in a small acceptable range, otherwise the drone will not be able to fly properly. ("flying" being sort of an imp part <Maybe joke here?>)
@@ -132,8 +156,16 @@ These values always need to be in a small acceptable range, otherwise the drone 
 
 Using advanced mathematical methods of analysis, some _very smart_ people have come up with a way to control roll, pitch and yaw through just the motor speeds.
 
-```
-Motor mixing algorithm here
+```python
+speed = prop_speed() #custom message type defined for the project
+# Equation for the speed of each propeller
+speed.prop1 = (thrust - output_yaw + output_pitch - output_roll)
+
+speed.prop2 = (thrust + output_yaw + output_pitch + output_roll)
+
+speed.prop3 = (thrust - output_yaw - output_pitch + output_roll)
+
+speed.prop4 = (thrust + output_yaw - output_pitch - output_roll)
 ```
 
 For our part, we took them at their word and stuck this as the final component of our control system.
@@ -154,11 +186,26 @@ In this case, PIDs operate between Roll, Pitch, Yaw, Thrust values and the Motor
 
 The code is relatively simple
 
-```
-Pid code for one thing, thrust maybe?
+```python
+#Speed found from testing at which drone hovers at a fixed height
+hover_speed = 508.75
+dErr_alt = current_alt_err - prev_alt_err
+# Proportional terms
+pMem_alt = current_alt_err
+#Integral Terms(i(t))
+iMem_alt += current_alt_err * dTime
+#limit integrand values
+if(iMem_alt > 800): iMem_alt = 800
+if(iMem_alt <-800): iMem_alt = -800
+#Derivative Terms(d(t))
+dMem_alt = dErr_alt / dTime
+prev_alt_err = current_alt_err
+output_alt = kp_thrust*pMem_alt + ki_thrust*iMem_alt + kd_thrust*dMem_alt
+# Final thrust
+thrust = hover_speed + output_alt*2.5
 ```
 
-Now you may have noticed the p_term, i_term and d_terms. What are they? They're values that are multiplied to the error. Doing so, they adjust the output and keep it _juust_ right so that the system (drone) remains stable.
+Now you may have noticed the p*term, i_term and d_terms. What are they? They're values that are multiplied to the error. Doing so, they adjust the output and keep it \_juust* right so that the system (drone) remains stable.
 
 The horror? These values are **random**.
 Let me say that again, THESE VALUES ARE **RANDOM** !!!
@@ -195,8 +242,52 @@ This was our daily schedule for nearly 7-8 agonizing days. Given that we had onl
 
 And still we kept on going, and going, and going......
 
-```
-Final code of the x,y dirs
+```python
+
+dTime = current_time - prevTime
+dErr_x = err_x - prevErr_x
+dErr_y = err_y - prevErr_y
+dErr_vel_x = err_vel_x - prevErr_vel_x
+dErr_vel_y = err_vel_y - prevErr_vel_y
+
+pMem_x = kp_x*err_x
+pMem_y = kp_y*err_y
+pMem_vel_x = kp_vel_x*err_x
+pMem_vel_y = kp_vel_y*err_y
+
+iMem_x += err_x*dTime
+iMem_y += err_y*dTime
+iMem_vel_x += err_vel_x*dTime
+iMem_vel_y += err_vel_y*dTime
+
+dMem_x = dErr_x/dTime
+dMem_y = dErr_y/dTime
+dMem_vel_x = dErr_vel_x/dTime
+dMem_vel_y = dErr_vel_y/dTime
+
+output_x = pMem_x + ki_x*iMem_x + kd_x*dMem_x
+output_y = pMem_y + ki_y*iMem_y + kd_y*dMem_y
+output_vel_x = pMem_vel_x + ki_vel_x*iMem_vel_x + kd_vel_x*dMem_vel_x
+output_vel_y = pMem_vel_y + ki_vel_y*iMem_vel_y + kd_vel_y*dMem_vel_y
+
+if(abs(err_x) < 4 and abs(vel_x) > 0.35):
+    dampner = (1/vel_x) * 0.01
+    print("Dampner: ", dampner)
+    setpoint_pitch = -(vel_x * 1.01  - dampner) #in the direction opposite to velocity
+    setpoint_pitch = 10 if (setpoint_pitch > 10) else setpoint_pitch
+    setpoint_pitch = -10 if (setpoint_pitch < -10) else setpoint_pitch
+
+if(abs(err_y) > 4 ):
+    setpoint_roll = output_y
+else:
+    setpoint_roll = 0
+
+if(abs(err_y) < 4 and abs(vel_y) > 0.35):
+    dampner_y = (1/vel_y) * 0.01
+    setpoint_roll = (vel_y * 2.0  - dampner_y) #in the direction opposite to velocity
+    setpoint_roll = 10 if (setpoint_roll>10) else setpoint_roll
+    setpoint_roll = -10 if (setpoint_roll <-10) else setpoint_roll
+
 ```
 
 One day before the deadline, with the help of the code written above and PID values that seemed to align. **We got it working**
