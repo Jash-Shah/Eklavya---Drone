@@ -195,18 +195,18 @@ The code is relatively simple
 
 ```python
 # Code for the Altitude PID
-
-#Speed found from testing at which drone hovers at a fixed height
+# Speed found from testing at which drone hovers at a fixed height
 hover_speed = 508.75
+# Altitude error
 dErr_alt = current_alt_err - prev_alt_err
 # Proportional terms
 pMem_alt = current_alt_err
-#Integral Terms(i(t))
+# Integral Terms(i(t))
 iMem_alt += current_alt_err * dTime
-#limit integrand values
+# limit integrand values
 if(iMem_alt > 800): iMem_alt = 800
 if(iMem_alt <-800): iMem_alt = -800
-#Derivative Terms(d(t))
+# Derivative Terms(d(t))
 dMem_alt = dErr_alt / dTime
 prev_alt_err = current_alt_err
 output_alt = kp_thrust*pMem_alt + ki_thrust*iMem_alt + kd_thrust*dMem_alt
@@ -225,9 +225,9 @@ Since each system is different, so are these values. While there are a few broad
 
 > A: Trial and error :slightly_smiling_face:
 
-Cue trying to get the drone to move autonomously 🤖
-Cue countless hours of frustration 😠
-Cue the poor drone being used and abused for a week straight by 3 sliding knobs 🎛️
+- Cue trying to get the drone to move autonomously 🤖
+- Cue countless hours of frustration 😠
+- Cue the poor drone being used and abused for a week straight by 3 sliding knobs 🎛️
 
 ## Flying is Hard
 
@@ -239,7 +239,7 @@ But now came the next part of our project, _autonomous movement_. Autonomous mov
 1. The drone needs to orient itself to move towards the desired point
 2. When it reaches the desired point, the drone needs to orient itself such that it stops there
 
-It was no. 2 which gave us the most grief. As the drone flew to a co-ordinate, it was unable to stop itself there. It then overshot the point and backtracked but the backtracking also couldn't stop itself properly. Leading into a self-sustaining cycle of osciallations that only grew stronger with time.
+It was no. 2 which gave us the most grief. As the drone flew to a co-ordinate, it was simply **unable** to stop itself there. It then _overshot_ the point and _backtracked_ but the backtracking also couldn't stop itself properly. Leading into a self-sustaining cycle of osciallations that only grew stronger with time.
 
 ![Graph of oscialltions increasing with time](assets/oscillations.png)
 
@@ -249,7 +249,7 @@ Despite frenzied searches on forums, meetings with mentors and conversations wit
 
 > A: 30 mins for _frustration_ -> 1 hr for _despair_ -> 2 hrs to contemplate _giving up_ -> 30 mins in between to restore the spirit :+1:
 
-This was our daily schedule for nearly 7-8 agonizing days. Given that we had only 1 month to complete the project and we had already lost a lot of time with the issues of our model, our efforts were only getting more and more frenzied as the deadline approached.
+This was our daily schedule for nearly **_7-8 agonizing days_**. Given that we had only _1 month_ to complete the project and we had already lost a lot of time with the issues of our model, our efforts were only getting more and more frenzied as the deadline approached.
 
 And still we kept on going, and going, and going......
 
@@ -301,30 +301,41 @@ if(abs(err_y) < 4 and abs(vel_y) > 0.35):
 
 ```
 
-**One day before the deadline**, with the help of the code written above and PID values that seemed to align. **We got it working**
+**One day before the deadline**, with the help of the code written above and PID values that unbelievably seemed to align. **We got it working**
 
 ![Final Output](assets/Final_output.gif)
 
 
 ## Conclusion
     
-Being First Year Computer Scinece students this was the first "real" big team project we had worked on. Here are a few things we learnt (sometimes painfully so) about not only developing but working on any project in general:
+Being First Year Computer Science students this was the first "real" big team project we had worked on. Here are a few things we learnt (sometimes painfully so) about not only developing but working on any project in general:
     <ul>
-       <li>Learning becomes much more fun if you get to apply it alongside!</li>
-        <li>Having well-thought and curated resources can go a loooong way.</li>
-        <li>There SHOULD be a course for effective Googling taught in all schools.</li>
-        <li>The best Mentors are the ones who can guide and nudge you in the right directions while letting you figuring out the solutions on your own.</li>
-        <li>Having a teammate who you can understand and communicate with easily makes any project 50% easier and a 100% more fun :)</li>
-        <li>The final vision of a project is much much different at the beginning than the end.</li>
-        <li>Having to scale back your orignal goals to meet deadlines isn't as much accepting defeat as it is an exercise in prioratization.</li>     
+       <li>Learning becomes much more fun if you get to apply it alongside! 🧑‍🔬</li>
+        <li>Having well-thought and curated resources can go a loooong way. 📚</li>
+        <li>There SHOULD be a course for effective Googling taught in all schools. 💻</li>
+        <li>The best Mentors are the ones who can guide and nudge you in the right directions while letting you figuring out the solutions on your own. 🧑‍🏫</li>
+        <li>Having a teammate who you can understand and communicate with easily makes any project 50% easier and a 100% more fun! 🥳</li>
+    <li>The final vision of a project is much <b>much</b> different at the beginning than the end. 👓</li>
+        <li>Having to scale back your orignal goals to meet deadlines isn't as much accepting defeat as it is an exercise in prioritization. 😣🏆</li>     
     </ul>
     
 So, to any of our fellow programmers or just anyone who cared to read till this point if there's anything to take away from this blog post, it's that **no matter what you want to do, you have the capacity to do it. Even if you have no idea how to, you can learn to.**
-    
-(its that anything is possible and fun with the right company,guidance and the will to push a bit more than last time)
+
+<!--
+(its that anything is possible and fun with the right company, guidance and the will to push a bit more than last time)
     
 After all, if persistence and pain can conquer PIDs, it can conquer anything (Not a very good conclusion, maybe revise?)
     
 (After all, if two First Year students can simulate a flying vehicle without burning their PCs or their brains then atleast you can do the latter)    
 
-(After all, if the two of us can prioratize all our time in tuning three knobs for a week straight then you have no excuse.)<Can be phrased better>
+(After all, if the two of us can prioratize all our time in tuning three knobs for a week straight then you have no excuse.)<Can be phrased better> 
+-->
+    
+After all, if two First Years with nothing more than some time and a lot of persistence can conquer PIDs and design a drone, you can do whatever you put your mind to too. 😊
+
+## Links and Further Reading
+- If we managed to hold your interest for this long, then try taking a look at our project [GitHub](https://github.com/Jash-Shah/Eklavya---Drone)
+- If you want to go in depth with the code and theory, take a look at our [project report](https://github.com/Jash-Shah/Eklavya---Drone/blob/main/report/Eklavya%20Report.pdf)
+- If you'd like to learn more about PIDs, take a look at this wonderful [paper](https://www.wescottdesign.com/articles/pid/pidWithoutAPhd.pdf) by Tim Wescott 
+- Check out our ever-present and helpful mentors: [Saad Hashmi](https://github.com/hashmis79), [Karthik Swaminathan](https://github.com/kart1802), [Dhruvi Doshi](https://github.com/dhruvi29)
+- If you'd like to learn more about us and what we do check out our profiles: [Jash Shah](https://github.com/Jash-Shah), [Toshan Luktuke](https://github.com/toshan-luktuke)
