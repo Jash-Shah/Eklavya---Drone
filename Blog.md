@@ -63,7 +63,11 @@ However this "lo and behold!" moment turned sour pretty quick when we saw that n
 
 ## A World of our Drone (Can it be Bit better??)
 
-World building is a fancy way of saying making our drone do and respond to the numerous pyhsical phenomena in the simulated world as it would in the real world(Yes, that still exists). This means giving it propulsion so that upon the wings spinning enough thrust would be generated to make the drone rise in the sky like a pheonix!(can you tell how obssessed we were with our model). Also attaching various sensors like 1. GPS - For getting position and velocity. 2. IMU - For getting orientation. 3. Camera - For visualizing its surroundings.
+World building is a fancy way of saying making our drone do and respond to the numerous pyhsical phenomena in the simulated world as it would in the real world(Yes, that still exists). This means giving it propulsion so that upon the wings spinning enough thrust would be generated to make the drone rise in the sky like a pheonix!(can you tell how obssessed we were with our model). Also attaching various sensors like:
+
+1. GPS - For getting position and velocity.
+2. IMU - For getting orientation.
+3. Camera - For visualizing its surroundings.
 
 We had planned to just use some pre-built propulsion and sensor plugins and add them to our URDF and move on to the next part but _Ohhh no no_; The ROS Gods had some other plans in mind. The plugins seemed damn near incompatible with our model. Anytime we would try to run the simulation the drone would just twitch and sway like a dog dry humping the ground(like it had an epilepsy fit.<replacement joke incase the first ones too offensive>). (I think this is too offensive :joy:)
 
@@ -74,8 +78,8 @@ Finally we did what most programmers do when they can't find a solution to a pro
 
 And Finally! after about two weeks(which felt like a month)of debugging we had a flying drone!
 
-<Insert link of E-yrc Model>
-    
+![ERYC Model](assets/drone_start.png)
+
 <Insert vid of glorious E-Yantra drone flying>
     
 And thus with our model and world set up we were ready to move onto building the control system.
@@ -85,7 +89,7 @@ And thus with our model and world set up we were ready to move onto building the
 No matter how complex the control theory is, at the end of the day what we can control about the drone are simply the motor speeds i.e. how fast the fans at the end spin.
 But to accomplish more complicated tasks with the drone (moving, stablilising etc.) we must make some layers that control these motors according to human inputs.
 This is the flow of the drone control system. We'll go into the individual components going ahead but as an overview:
-    (Image of block diagram about control system - The one Jash made)
+    ![PID Diagram](assets/PID%20Diagram.png)
     
 The user gives input co-ordinates and a target altitude for the drone. Our goal was to get the drone to fly to the target co-ords autonomously. 
 To accomplish this we needed to know a few things:
@@ -183,6 +187,7 @@ All it is, is a way for the system (drone) to be able to bring itself towards a 
 In this case, PIDs operate between Roll, Pitch, Yaw, Thrust values and the Motor Mixing Algorithm. They consider the taget values, look at the current values and then decide if the motor speeds should be higher or lower to get to the target values and how high and how low these values should be.
 
 (PID diagram with the fancy E symbol)
+![PID Theory Diagram]()
 
 The code is relatively simple
 
@@ -222,7 +227,7 @@ Cue countless hours of frustration
 ## Flying is Hard
 
 After a couple of days of PID tuning, our drone could take off and hover stably above the ground.
-(Image/gif here)
+![Drone hovering](assets/drone_hover.gif)
 
 But now came the next part of our project, _autonomous movement_. Autonomous movement is difficult for a couple of reasons:
 
