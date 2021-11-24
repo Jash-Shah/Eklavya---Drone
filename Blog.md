@@ -77,7 +77,7 @@ We had planned to just use some pre-built propulsion and sensor plugins and add 
 
 ![First Model in Gazebo](assets/Og_Drone_gazebo2.gif)
 
-Turns out the problem was with the wing joints not being registered as revolute. However, even though we got a **_somewhat_** what more stable system after fixing that, the drone would still not lift. There were many painful days spent scouring all sorts of forums, drearily tring to sniff out even a **_whiff_** of a solution.
+Turns out the problem was with the wing joints not being registered as revolute. However, even though we got a **_somewhat_** what more stable system after fixing that, the drone would still not lift. There were many painful days spent scouring all sorts of forums, drearily trying to sniff out even a **_whiff_** of a solution.
 Finally we did what most programmers do when they can't find a solution to a problem....we just took someone else's model and abandoned ours. And trying to stick to our _high standards_ this someone else was none other than IIT Bombay (specifically the model they provided for their [E-Yantra 2020](https://new.e-yantra.org/eyrc) competition).
 
 And Finally! after about two weeks (which felt like a month) of debugging we had a flying drone!
@@ -90,7 +90,8 @@ And thus with our model and world set up, we were ready to move onto building th
 No matter how complex the control theory is, at the end of the day what we can control about the drone are simply the motor speeds i.e. how fast the fans at the end spin.
 But to accomplish more complicated tasks with the drone (moving, stablilising etc.) we must make some _layers_ that control these motors according to human inputs.
 This is the flow of the drone control system. We'll go into the individual components going ahead but as an overview:
-    ![PID Diagram](assets/PID%20Diagram.png)
+    
+![PID Diagram](assets/PID_Diagram.png)
     
 The user gives input co-ordinates and a target altitude for the drone. Our goal was to get the drone to fly to the target co-ords autonomously. 
 To accomplish this we needed to know a few things:
