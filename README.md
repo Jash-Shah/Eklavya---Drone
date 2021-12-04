@@ -137,7 +137,8 @@ https://user-images.githubusercontent.com/82902712/138563488-c9e4268a-3700-4b34-
 - [x] Create a control system for the drone using PID
 - [x] Stabilise the Roll, Pitch and Yaw of the Drone 
 - [x] Get the drone to fly at any arbitrary altitude
-- [ ] Have the drone fly to given co-ordinates and stabilise itself
+- [x] Have the drone fly to given co-ordinates and stabilise itself
+- [ ] Implement obstacle avoidance 
 
 <!-- CONTRIBUTORS -->
 ## Contributors
