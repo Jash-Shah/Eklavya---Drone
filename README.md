@@ -111,7 +111,7 @@ rosrun vitarana_drone control.py
 <!--Flowchart -->
 ## Algorithm Flowchart
 Simplified code structure  
-<img src="assets/PID Diagram.png">
+<img src="assets/PID_Diagram.png">
 
 <!-- RESULTS AND DEMO -->
 ## Results and Demo
